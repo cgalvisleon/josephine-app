@@ -1,0 +1,49 @@
+.__404Page {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.__404 {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  height: 100%;
+  width: 100%;
+  display: grid;
+  grid-gap: 0px;
+  grid-template-columns: auto 400px auto;
+  grid-template-rows: auto 200px 35px 20px auto;
+  overflow: hidden;
+}
+.__T404 {
+  grid-column-end: 2;
+  grid-column-start: 2;
+  grid-row-end: 2;
+  grid-row-start: 2;
+  margin: auto;
+  font-size: 170px;
+  font-weight: 400;
+  color: var(--mute);
+}
+.__N404 {
+  grid-column-end: 2;
+  grid-column-start: 2;
+  grid-row-end: 3;
+  grid-row-start: 3;
+  margin: auto;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--mute);
+}
+.__D404 {
+  grid-column-end: 2;
+  grid-column-start: 2;
+  grid-row-end: 4;
+  grid-row-start: 4;
+  margin: auto;
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--mute);
+}

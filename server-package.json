@@ -1,0 +1,20 @@
+{
+  "name": "serve",
+  "version": "1.0.0",
+  "description": "Server expres for deploy react.js",
+  "main": "index.js",
+  "scripts": {
+    "dev": "clear; nodemon index.js",
+    "start": "NODE_ENV=production node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cgalvisleon/react-server-express.git"
+  },
+  "author": "cgalvisleon@gmail.com",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
