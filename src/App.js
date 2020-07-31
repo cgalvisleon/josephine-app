@@ -28,6 +28,9 @@ import ViewContacts from "./views/viewContacts";
 import ViewProfile from "./views/viewProfile";
 import viewPreferences from "./views/viewPreferences";
 import ViewDevToolBox from "./views/viewDevToolbox";
+import ViewSuports from "./views/viewSuports";
+import ViewLogs from "./views/viewLogs";
+/** Views of the projects */
 
 function App() {
   return (
@@ -52,6 +55,8 @@ function App() {
                 <Route exact path="/inboxes/profile" component={ViewProfile} />
                 <Route exact path="/inboxes/preferences" component={viewPreferences} />
                 <Route exact path="/inboxes/devtoolbox" component={ViewDevToolBox} />
+                <Route exact path="/inboxes/suports" component={ViewSuports} />
+                <Route exact path="/inboxes/logs" component={ViewLogs} />
 
                 <Route component={ViewNotFound} />
               </Switch>
