@@ -1,0 +1,493 @@
+:root {
+  --suport-height: 26px;
+  --suport-font-size: 12px;
+}
+.suport {
+  font-size: var(--suport-font-size);
+  margin-bottom: 0px;
+  margin-right: -4px;
+}
+.suport .input-group {
+  height: 100%;
+}
+.suport .btn.sp {
+  border-radius: 0px;
+  border-style: none;
+  border-left: 1px solid var(--border);
+  height: var(--suport-height);
+  width: 26px;
+  padding: 5px 4px;
+  font-size: var(--suport-font-size);
+}
+.suport .input-group-text.sp {
+  border-radius: 0px;
+  border-style: none;
+  border-left: 1px solid var(--border);
+  background-color: var(--gray-light) !important;
+  height: var(--suport-height);
+  width: 26px;
+  padding: 5px 6px;
+  margin-left: 1px;
+  font-size: var(--suport-font-size);
+  text-align: center;
+  color: var(--text);
+}
+.suport .input-group-text.sp:hover {
+  background-color: var(--secondary) !important;
+}
+.suport .input-group-text.sp.disabled,
+.suport .input-group-text.sp:disabled,
+.suport .input-group-text.sp[disabled],
+.suport .input-group-text.sp[readonly] {
+  color: var(--text-muted);
+}
+.suport .input-group-text.sp.disabled:hover,
+.suport .input-group-text.sp:disabled:hover,
+.suport .input-group-text.sp[disabled]:hover,
+.suport .input-group-text.sp[readonly]:hover {
+  background-color: var(--gray-light) !important;
+}
+.suport .input-group-text.sp.unity {
+  width: 26px;
+  margin: 0px 1px 0px 0px;
+  border: 1px solid var(--border);
+  border-left-width: 0px;
+  border-top-width: 0px;
+  border-bottom-width: 0px;
+  justify-content: center;
+  text-overflow: ellipsis;
+}
+.suport .input-group-text.sp.bt {
+  width: 26px;
+}
+.suport .input-group-text.sp.bt:last-child {
+  margin-left: 0px;
+}
+.suport .form-control.sp {
+  border-style: none;
+  border-width: 0px;
+  padding: 2px 4px;
+  height: 100%;
+  min-height: var(--suport-height);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-radius: 0px;
+  font-size: var(--suport-font-size);
+}
+.suport .form-control.sp > option {
+  padding: 6px 12px;
+}
+.suport .form-control.sp select,
+.suport .form-control.sp select:hover,
+.suport .form-control.sp select:active,
+.suport .form-control.sp select.active,
+.suport .form-control.sp.select {
+  border-radius: 0px !important;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+  -webkit-outline-radius: 0px;
+  -moz-outline-radius: 0px;
+}
+.suport .form-control.sp:focus {
+  background-color: #ebebeb;
+}
+.suport div.form-control.sp,
+.suport .form-control.sp.disabled,
+.suport .form-control.sp:disabled,
+.suport .form-control.sp[readonly] {
+  color: var(--text-muted);
+  background-color: var(--white);
+}
+input.form-control,
+div.form-control {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.suport .caption .custom-control {
+  margin: -5px 0px;
+}
+.suport .custom-control-label {
+  font-weight: 500;
+  padding: 4px 0px;
+}
+.suport .custom-control-label::before {
+  width: 16px;
+  height: 16px;
+}
+.suport .custom-control-label::after {
+  width: 16px;
+  height: 16px;
+}
+.suport .custom-control-inline {
+  padding-right: 16px;
+}
+.suport .span {
+  float: left;
+  width: auto;
+}
+.suport-group {
+  border: 1px solid var(--border);
+  border-bottom: 0px none;
+  margin-bottom: 4px;
+}
+.suport-space {
+  height: 4px;
+  margin: 8px 0px;
+}
+.custom-label {
+  padding: 4px 0px 4px 16px;
+}
+.custom-label.success {
+  color: var(--success);
+}
+.custom-label.warning {
+  color: var(--warning);
+}
+.custom-label.danger {
+  color: var(--danger);
+}
+.input-group-append.vertical {
+  flex-direction: column;
+  .input-group-text.vertical {
+    font-size: 6px;
+  }
+  .input-group-text.vertical:first-child {
+    border-bottom: 0px none;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 0px;
+  }
+  .input-group-text.vertical:last-child {
+    border-top-right-radius: 0px;
+  }
+}
+.suport-tool {
+  margin-bottom: 4px;
+  display: grid;
+}
+.suport-scroll {
+  height: 413px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: -15px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+.suport-scroll.small {
+  font-size: 12px;
+}
+.suport-scroll.auto {
+  height: auto;
+  max-height: 413px;
+}
+.suport-list {
+  border: 1px solid var(--border);
+  border-top: 0px none;
+  margin-bottom: 4px;
+}
+.suport-list > .suport-item:last-of-type > .suport-td {
+  border-bottom: 0px none;
+}
+.suport-col {
+  display: grid;
+  font-size: 12px;
+}
+.suport-col > .suport-group {
+  margin-bottom: 0px;
+  border: 0px none;
+}
+.suport-col > .suport-group > .suport-head {
+  border-left: 1px solid var(--border);
+  border-top: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+}
+.suport-col > .suport-group > .suport-scroll {
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+}
+.suport-row {
+  display: grid;
+  position: relative;
+}
+.suport-row > .suport-td {
+  height: 100%;
+  position: relative;
+}
+.suport-row .suport-td.value {
+  overflow: hidden;
+}
+.suport-head {
+  display: grid;
+  background-color: var(--background-gray);
+  font-size: 12px;
+}
+.suport-head .suport-th {
+  min-height: var(--suport-height);
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  margin: 0px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  text-align: center;
+  vertical-align: middle;
+  font-weight: 600;
+  line-height: 16px;
+  padding: 5px 4px;
+  height: 100%;
+}
+.suport-head .suport-th:last-child {
+  border-right: 0px none;
+}
+.suport-head .suport-th i {
+  float: right;
+  margin: 2px 0px;
+  color: var(--mute);
+}
+.suport-head .suport-td {
+  text-align: center;
+  vertical-align: middle;
+  font-weight: 600;
+  line-height: 16px;
+  padding: 5px 4px;
+  height: 100%;
+}
+.suport-head .suport-td i {
+  float: right;
+  margin: 2px 0px;
+  color: var(--mute);
+}
+.suport-item {
+  display: grid;
+  font-size: 12px;
+  cursor: pointer;
+}
+.suport-item:hover,
+.suport-item.active,
+.suport-item:active {
+  background-color: var(--background-gray);
+}
+.suport-item .suport-td {
+  line-height: 16px;
+  padding: 5px 4px;
+  position: relative;
+  overflow: hidden;
+}
+.suport-item .suport-td.bt {
+  padding-right: 30px;
+}
+.suport-item .suport-td .input-group-text.sp {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  right: 0px;
+  margin: 0px;
+}
+.suport-item .suport-td.form-check .form-check-input {
+  margin: 1px 0px;
+  left: 6px;
+  top: 6px;
+}
+.suport-item.disabled .suport-td {
+  color: var(--text-muted);
+  background-color: var(--white);
+}
+.suport-item.disabled .input-group-text.sp,
+.suport-item.disabled .input-group-text.sp:hover,
+.suport-item.disabled .input-group-text.sp.disabled:hover,
+.suport-item.disabled .input-group-text.sp:disabled:hover,
+.suport-item.disabled .input-group-text.sp[disabled]:hover {
+  background-color: var(--gray-light) !important;
+  opacity: 1;
+}
+.suport-bottom {
+  display: grid;
+  background-color: var(--background-gray);
+}
+.suport-bottom > .suport-td {
+  font-weight: 600;
+  line-height: 16px;
+  padding: 5px 4px;
+}
+.suport-td {
+  min-height: var(--suport-height);
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  margin: 0px;
+  padding: 0px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 16px;
+}
+.react-datepicker-popper.datetimepicker-left {
+  margin-top: 4px;
+}
+.react-datepicker-popper.datetimepicker-right {
+  left: -59px;
+  margin-top: -6px;
+}
+.react-datepicker-popper.datepicker-right .react-datepicker {
+  left: -44px;
+  margin-top: -6px;
+}
+.suport-td:last-of-type {
+  border-right: 0px none;
+}
+.suport-td.caption {
+  font-weight: 500;
+  line-height: 16px;
+  padding: 5px 4px;
+}
+.suport-td.middle {
+  display: flex;
+  height: 100%;
+
+  .text-middle {
+    margin: auto 0px;
+    height: 16px;
+  }
+  .text-middle-right {
+    margin: auto 0px auto auto;
+    height: 16px;
+  }
+}
+.suport-td.value {
+  font-weight: 500;
+  line-height: 16px;
+  padding: 5px 4px;
+  text-align: right;
+}
+.suport-td.d {
+  height: fit-content;
+}
+.suport-td.c {
+  padding: 0px;
+  border-bottom: 0px none;
+}
+.suport-td.m {
+  padding: 18px 4px;
+}
+.suport-td.dropdown {
+  overflow: visible;
+}
+.suport-box {
+  min-height: var(--suport-height);
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  margin: 0px;
+  padding: 0px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 16px;
+  overflow: hidden;
+}
+.suport-box:last-of-type {
+  border-right: 0px none;
+}
+.suport-box {
+  border: 0px none;
+  padding: 0px;
+}
+.suport-box .suport-row .suport-td {
+  border: 0px none;
+}
+.suport-box .suport-row .suport-td.caption {
+  text-align: left;
+  font-size: 13px;
+  font-weight: normal;
+  padding: 6px 0px;
+}
+.text,
+.suport-box .suport-row .suport-td.text {
+  white-space: normal;
+}
+.suport-box .suport-row .suport-td.component {
+  margin-bottom: 0px;
+  display: flex;
+}
+.suport-box .suport-row .suport-td.component .form-check-inline {
+  align-self: center;
+  flex: auto;
+}
+.suport-box .suport-row .suport-td .image {
+  width: 100%;
+  height: 100%;
+  padding: 0px 0px 0px 8px;
+}
+.suport-box .suport-row .suport-td .input-group-text.unity {
+  width: 42px;
+  height: 31px;
+  padding: 4px 6px;
+  text-align: center !important;
+}
+.suport-box .suport-row .suport-td.col {
+  padding: 8px 8px;
+}
+.suport-box .suport-row:first-of-type .suport-td.col {
+  padding-top: 0px;
+}
+.suport-box .suport-row:last-of-type .suport-td.col {
+  border-bottom: 0px none;
+}
+.suport-box .suport-row .suport-td.col:first-of-type {
+  padding-left: 0px;
+}
+.suport-box .suport-row .suport-td.col:last-of-type {
+  padding-right: 0px;
+}
+.suport-box .suport-row .suport-td .input-group-text {
+  max-height: 31px;
+}
+.box-1-1 {
+  padding: 0px 8px 8px 0px;
+  border: 0px none;
+}
+.box-1-2 {
+  padding: 0px 0px 8px 8px;
+  border: 0px none;
+}
+.box-2-1 {
+  padding: 8px 8px 0px 0px;
+  border: 0px none;
+}
+.box-2-2 {
+  padding: 8px 0px 0px 8px;
+  border: 0px none;
+}
+.success {
+  color: var(--success);
+}
+.info {
+  color: var(--info);
+}
+.warning {
+  color: var(--warning);
+}
+.danger {
+  color: var(--danger);
+}
+.details-menu {
+  margin: auto 4px;
+}
+.details-menu .btn {
+  margin-right: 4px;
+}
+.scroll-count p {
+  float: right;
+  margin: 0px;
+  padding-top: 4px;
+}
+.scroll-count-end {
+  margin: auto 4px;
+}
+.scroll-count-all {
+  margin: auto 4px;
+  margin-right: 0px;
+}
+.t-80 {
+  font-size: 80%;
+}
+.t-90 {
+  font-size: 80%;
+}

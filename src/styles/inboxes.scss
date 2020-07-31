@@ -1,0 +1,110 @@
+.inboxes {
+  padding: 0px;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background-color: var(--white);
+  display: grid;
+  grid-gap: 0px;
+  grid-template-columns: 240px auto;
+}
+.inboxes-menu {
+  grid-column: 1;
+  grid-row: 1;
+  z-index: 20;
+}
+.inboxes-detail {
+  grid-column: 2;
+  grid-row: 1;
+}
+.inboxes-detail-content {
+  position: relative;
+  height: 100%;
+  width: 100%;
+
+  display: grid;
+  grid-gap: 0px;
+  grid-template-columns: auto 0px;
+  grid-template-rows: auto 40px;
+}
+.inboxes-detail-content.talking {
+  grid-template-columns: auto 320px;
+}
+.inboxes-detail-content-main {
+  grid-column-start: 1;
+  grid-column-end: 1;
+  grid-row-start: 1;
+  grid-row-end: 1;
+  background-color: var(--background-gray);
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+}
+.inboxes-detail-content-tool {
+  grid-column: 2;
+  grid-row-start: 1;
+  grid-row-end: 3;
+  background-color: var(--sidebar);
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  border-left: 1px solid var(--border);
+}
+.inboxes-detail-content-footer {
+  width: 100%;
+  grid-column-start: 1;
+  grid-column-end: 1;
+  grid-row: 2;
+  font-size: 13px;
+  padding: 10px;
+  border-top: 1px solid var(--border);
+
+  .footer-content {
+    width: 100%;
+    display: grid;
+    grid-gap: 0px;
+    grid-template-areas: 'copyright platform';
+    grid-template-columns: auto auto;
+  }
+  .footer-copyright {
+    grid-column-end: copyright;
+    grid-column-start: copyright;
+    grid-row-end: copyright;
+    grid-row-start: copyright;
+  }
+  .footer-platform {
+    grid-column-end: platform;
+    grid-column-start: platform;
+    grid-row-end: platform;
+    grid-row-start: platform;
+    text-align: right;
+  }
+}
+@media screen and (max-width: 720px) {
+  .inboxes {
+    grid-template-columns: 100%;
+    grid-template-rows: 56px auto;
+  }
+  .inboxes-menu {
+    grid-column: 1;
+    grid-row: 1;
+    z-index: 20;
+  }
+  .inboxes-detail {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .inboxes-detail-content {
+    grid-template-rows: auto;
+  }
+  .inboxes-detail-content-footer {
+    display: none;
+  }
+  .inboxes-detail-content.talking {
+    grid-template-columns: 0px auto;
+  }
+}

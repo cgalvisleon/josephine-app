@@ -1,0 +1,57 @@
+.conversation {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+
+  padding: 15px;
+  display: grid;
+  grid-row-gap: 6px;
+  grid-template-columns: 280px 6px auto;
+  grid-template-rows: 100%;
+  grid-template-areas: "contacts . messages";
+}
+.conversation .contacts {
+  grid-column: contacts;
+  grid-row: 1;
+
+  border: 1px solid var(--border);
+}
+.conversation .messages {
+  grid-column: messages;
+  grid-row: 1;
+
+  padding: 0px;
+  display: grid;
+  grid-row-gap: 6px;
+  grid-template-columns: 100%;
+  grid-template-rows: 30px auto 30px;
+  grid-template-areas: "tool" "list" "message";
+}
+.conversation .messages .list {
+  grid-column: 1;
+  grid-row: list;
+
+  display: grid;
+  grid-gap: 0px;
+  grid-template-columns: auto;
+
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 0px 8px;
+}
+.conversation .messages .message {
+  grid-column: 1;
+  grid-row: message;
+
+  display: grid;
+  grid-gap: 0px;
+  grid-template-columns: auto;
+}
+.h100 {
+  height: 100%;
+}
+.w32 {
+  width: 32px;
+}
