@@ -6,8 +6,8 @@ const environment = {
   copyright: "© 2016-2020",
   storage: "dploy-user",
   production: false,
-  app: "template",
-  mapbox: ""
+  app: "dployweb",
+  mapbox: "pk.eyJ1Ijoic2VydmljaW9zIiwiYSI6ImNpdzFjZmcyazA4YmIybm8ycXR0dWxiY3EifQ.78sqPHHt3mYQ8TymakHetA"
 };
 
 module.exports = environment;

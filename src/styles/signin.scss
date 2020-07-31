@@ -1,0 +1,85 @@
+.container-fluid {
+  padding-top: 112px;
+}
+.signinColumns {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: rgb(243, 243, 244);
+}
+.font-bold {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.inbox-content {
+  padding: 20px;
+  min-height: 316px;
+  max-width: 365px;
+}
+.title {
+  color: white;
+}
+.w {
+  min-width: 250px;
+}
+.eye {
+  width: 35.5px;
+}
+.signin {
+  height: 400px;
+}
+.signin.dark {
+  color: var(--white);
+  background-color: var(--dark);
+
+  img {
+    position: absolute;
+    bottom: 120px;
+    left: 10%;
+    width: 80%;
+  }
+}
+.forgot {
+  height: 400px;
+}
+.forgot.dark {
+  color: var(--white);
+  background-color: var(--dark);
+
+  img {
+    position: absolute;
+    bottom: 30px;
+    left: 10%;
+    width: 80%;
+  }
+}
+.register {
+  height: 530px;
+}
+.register.dark {
+  color: var(--white);
+  background-color: var(--dark);
+
+  img {
+    position: absolute;
+    bottom: 80px;
+    left: 10%;
+    width: 80%;
+  }
+}
+@media (max-width: 540px) {
+  .signinColumns {
+    background-color: white;
+  }
+  .container-fluid {
+    padding-top: 80px;
+  }
+  .register {
+    height: 730px;
+  }
+}
+@media (max-width: 720px) {
+  .w {
+    max-width: 341px;
+  }
+}

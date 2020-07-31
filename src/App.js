@@ -9,6 +9,14 @@ import Layout from "./layouts/layout";
 import Home from "./pages/home";
 import NotFound from "./pages/notfound";
 import Help from "./pages/help";
+import Signin from "./pages/signin";
+import Register from "./pages/register";
+import Forgot from "./pages/forgot";
+import Seek from "./pages/seek";
+import Issues from "./pages/issues";
+import Politics from "./pages/politics";
+import Agreements from "./pages/agreements";
+import Terms from "./pages/terms";
 
 /** Projects */
 
@@ -21,6 +29,14 @@ function App() {
         <Switch>
           <Route exact path="/" component={Home} />
           <Route exact path="/help" component={Help} />
+          <Route exact path="/signin" component={Signin} />
+          <Route exact path="/register" component={Register} />
+          <Route exact path="/forgot" component={Forgot} />
+          <Route exact path="/seek" component={Seek} />
+          <Route exact path="/issues" component={Issues} />
+          <Route exact path="/politics" component={Politics} />
+          <Route exact path="/agreements" component={Agreements} />
+          <Route exact path="/terms" component={Terms} />
           <Route component={NotFound} />
         </Switch>
       </Layout>

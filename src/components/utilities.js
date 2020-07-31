@@ -914,7 +914,7 @@ export const getHeaders = function() {
   result.append("Content-Type", "application/json");
   result.append("language", navigator.language);
   result.append("Timezone", `${timezone}`);
-  result.append("Josephine-Key", `${key}`);
+  result.append("Josephine_Key", `${key}`);
   result.append("Authorization", `Bearer ${token}`);
   result.append("Session", session);
   return result;
@@ -944,14 +944,14 @@ export const http = async function(method, endpoint, params) {
   params = params || {};
   const headers = getHeaders();
   if (method === "GET") {
-    return await fetch(`${apiUrl}/api/${endpoint}`, {
+    return await fetch(`${apiUrl}/${endpoint}`, {
       method: "GET",
       headers: headers
     })
       .then(res => extractResponse(res))
       .catch(error => handleError(error));
   } else if (method === "POST") {
-    return await fetch(`${apiUrl}/api/${endpoint}`, {
+    return await fetch(`${apiUrl}/${endpoint}`, {
       method: "POST",
       body: JSON.stringify(params),
       headers: headers
@@ -959,7 +959,7 @@ export const http = async function(method, endpoint, params) {
       .then(res => extractResponse(res))
       .catch(error => handleError(error));
   } else if (method === "PUT") {
-    return await fetch(`${apiUrl}/api/${endpoint}`, {
+    return await fetch(`${apiUrl}/${endpoint}`, {
       method: "PUT",
       body: JSON.stringify(params),
       headers: headers
@@ -967,7 +967,7 @@ export const http = async function(method, endpoint, params) {
       .then(res => extractResponse(res))
       .catch(error => handleError(error));
   } else if (method === "PATCH") {
-    return await fetch(`${apiUrl}/api/${endpoint}`, {
+    return await fetch(`${apiUrl}/${endpoint}`, {
       method: "PATCH",
       body: JSON.stringify(params),
       headers: headers
@@ -975,7 +975,7 @@ export const http = async function(method, endpoint, params) {
       .then(res => extractResponse(res))
       .catch(error => handleError(error));
   } else if (method === "DELETE") {
-    return await fetch(`${apiUrl}/api/${endpoint}`, {
+    return await fetch(`${apiUrl}/${endpoint}`, {
       method: "DELETE",
       body: JSON.stringify(params),
       headers: headers
@@ -988,11 +988,13 @@ export const http = async function(method, endpoint, params) {
 };
 
 export const pdf = function(endpoint) {
-  window.open(`${apiUrl}/api/${endpoint}`, "_blank");
+  const url = `${apiUrl}/${endpoint}`;
+  window.open(url, "_blank");
 };
 
 export const xls = async function(endpoint) {
-  window.open(`${apiUrl}/api/${endpoint}`, "_blank");
+  const url = `${apiUrl}/${endpoint}`;
+  window.open(url, "_blank");
 };
 
 export const focus = function(id) {
