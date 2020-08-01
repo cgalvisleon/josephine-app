@@ -105,7 +105,6 @@ class ViewUsers extends React.Component {
     } else {
       Project.users(project_id, state, search, 1, rows).then(result => {
         const data = result.data;
-        console.log(data);
         this.setState({ data: data });
       });
     }

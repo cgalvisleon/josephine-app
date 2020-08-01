@@ -1,4 +1,5 @@
-import { http, isOnLine, ShowAlert, getValue, join, setValue } from "../components/utilities";
+import { http } from "../components/http";
+import { isOnLine, ShowAlert, getValue, join, setValue } from "../components/utilities";
 import { MSG001 } from "../components/msg";
 
 export const Api = {

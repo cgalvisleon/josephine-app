@@ -42,7 +42,6 @@ class ListContacts extends React.Component {
   };
 
   handleSetData = e => {
-    console.log(e);
     if (!isOnLine) {
       this.handleUpdate(e);
     }
@@ -137,7 +136,6 @@ class ListContacts extends React.Component {
     } else {
       Project.contacts(project_id, state, search, 1, rows, [this.state.select]).then(result => {
         const data = result.data;
-        console.log(data);
         this.setState({
           data: {
             ...this.state.data,

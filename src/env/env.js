@@ -7,6 +7,8 @@ const environment = {
   storage: "dploy-user",
   production: false,
   app: "dployweb",
+  url: "https://api.dploy.site",
+  url_dev: "http://localhost:3000",
   mapbox: "pk.eyJ1Ijoic2VydmljaW9zIiwiYSI6ImNpdzFjZmcyazA4YmIybm8ycXR0dWxiY3EifQ.78sqPHHt3mYQ8TymakHetA"
 };
 

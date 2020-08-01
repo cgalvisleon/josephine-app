@@ -1,4 +1,5 @@
-import { http, isOnLine, ShowAlert, ShowOffLine, getValue } from "../components/utilities";
+import { http } from "../components/http";
+import { isOnLine, ShowAlert, ShowOffLine, getValue } from "../components/utilities";
 
 export const ApiTypehead = {
   users: async function(search) {

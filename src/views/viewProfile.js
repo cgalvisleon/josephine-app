@@ -158,7 +158,7 @@ class ViewProfile extends React.Component {
                   </div>
                   <div className="view-detail-detail">
                     <div className="view-profile">
-                      <div className="view-profile-image" style={{ backgroundImage: "url('/header_2.png')" }} />
+                      <div className="view-profile-image" style={{ backgroundImage: "url('/header_one.jpg')" }} />
                       <div className="view-profile-main">
                         <Avatar
                           className="avatar"

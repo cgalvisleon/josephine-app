@@ -1,5 +1,5 @@
+import { http } from "../components/http";
 import {
-  http,
   isOnLine,
   ShowAlert,
   getVar,

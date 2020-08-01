@@ -1,4 +1,5 @@
-import { http, isOnLine, ShowOffLine } from "../components/utilities";
+import { http } from "../components/http";
+import { isOnLine, ShowOffLine } from "../components/utilities";
 
 export const Api = {
   signIn: async function(username, password) {

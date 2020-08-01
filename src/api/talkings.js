@@ -1,4 +1,5 @@
-import { http, isOnLine, ShowAlert, ShowOffLine, getValue, setValue, join } from "../components/utilities";
+import { http } from "../components/http";
+import { isOnLine, ShowAlert, ShowOffLine, getValue, setValue, join } from "../components/utilities";
 
 export const Api = {
   talkings: async function(id, search, page, rows, list) {

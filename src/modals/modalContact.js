@@ -168,7 +168,6 @@ class ModalContact extends React.Component {
     if (e.focusInt) {
       setFocus(`${this.state._id}_caption`);
     }
-    console.log(e);
   };
 
   handleData = focusInt => {

@@ -153,7 +153,6 @@ class Inboxes extends React.Component {
       } else {
         const profile = getValue(result, "data", {});
         this.getFolder(profile.project_id).then(result => {
-          console.log(result);
           this.setState({
             profile: profile.profile,
             projects: profile.projects,

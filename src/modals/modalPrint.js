@@ -1,7 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "../styles/modal.scss";
-import { Loading, showModal, hideModal, toolTip, pdf, xls, getValue, getData, getRow, userId, projectId } from "../components/utilities";
+import { pdf, xls } from "../components/http";
+import { Loading, showModal, hideModal, toolTip, getValue, getData, getRow, userId, projectId } from "../components/utilities";
 import DateTime from "../components/dateTime";
 import ModalHeader from "../components/modalHeader";
 import { Api as System } from "../api/system";

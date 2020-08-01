@@ -124,7 +124,6 @@ class ViewSuports extends React.Component {
       Project.documents(project_id, _class, state, search, 1, rows).then(result => {
         if (result.msg === "") {
           const data = result.data;
-          console.log(data);
           this.setState({
             data: data,
             printParams: {
