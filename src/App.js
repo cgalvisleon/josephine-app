@@ -23,6 +23,7 @@ import Terms from "./pages/terms";
 
 /** Views */
 import ViewNotFound from "./views/viewNotfound";
+import ViewDefault from "./views/viewDefault";
 import ViewUsers from "./views/viewUsers";
 import ViewContacts from "./views/viewContacts";
 import ViewProfile from "./views/viewProfile";
@@ -50,6 +51,7 @@ function App() {
           <Route exact path="/inboxes*">
             <Inboxes>
               <Switch>
+                <Route exact path="/inboxes" component={ViewDefault} />
                 <Route exact path="/inboxes/users" component={ViewUsers} />
                 <Route exact path="/inboxes/contacts" component={ViewContacts} />
                 <Route exact path="/inboxes/profile" component={ViewProfile} />

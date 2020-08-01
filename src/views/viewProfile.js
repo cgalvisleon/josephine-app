@@ -63,7 +63,6 @@ class ViewProfile extends React.Component {
   };
 
   handleChangeAvatar = e => {
-    console.log(e);
     const data = e.data.data;
     this.setState({
       data: {

@@ -17,13 +17,13 @@ function SideBar(props) {
               project={props.project}
               project_id={props.project_id}
               handleSignOut={props.handleSignOut}
-            ></MenuProject>
+            />
           </div>
           <div className="sidebar-list">
-            <MenuFolders folders={props.folders} select={props.folder}></MenuFolders>
+            <MenuFolders folders={props.folders} select={props.folder} />
           </div>
           <div className="sidebar-bottom">
-            <MenuTools talking={props.talking}></MenuTools>
+            <MenuTools talking={props.talking} />
           </div>
         </div>
       </div>

@@ -10,7 +10,7 @@ function MenuFolders(props) {
       {folders.map((folder, i) => {
         return (
           <React.Fragment key={i}>
-            <ItemFolder folder={folder} select={props.select}></ItemFolder>
+            <ItemFolder folder={folder} select={props.select} />
           </React.Fragment>
         );
       })}

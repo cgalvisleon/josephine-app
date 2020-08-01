@@ -153,6 +153,7 @@ class Inboxes extends React.Component {
       } else {
         const profile = getValue(result, "data", {});
         this.getFolder(profile.project_id).then(result => {
+          console.log(result);
           this.setState({
             profile: profile.profile,
             projects: profile.projects,
@@ -222,7 +223,7 @@ class Inboxes extends React.Component {
               folders={this.state.folders}
               folder={this.state.folder}
               handleSignOut={this.handleSignOut}
-            ></SideBar>
+            />
           </div>
           <div className="inboxes-detail">
             <div className={!this.state.talking ? "inboxes-detail-content" : "inboxes-detail-content talking"}>
