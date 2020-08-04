@@ -32,7 +32,7 @@ class Register extends React.Component {
         confirmation: "",
         caption: "",
         project: "",
-        module_id: "MODULE-ILUMINA",
+        module_id: "-1",
         city_id: "11001",
         city: "Bogota, D.C.",
         code: ""
@@ -90,7 +90,7 @@ class Register extends React.Component {
     } else if (data.project === "") {
       ShowAlert("¡Nombre de projecto requerido!");
       focus("project");
-    } else if (data.module_id === "") {
+    } else if (data.module_id === "-1") {
       ShowAlert("Módulo requerido!");
       focus("module_id");
     } else if (data.city_id === "") {
@@ -148,7 +148,7 @@ class Register extends React.Component {
         confirmation: "",
         caption: "",
         project: "",
-        module_id: "MODULE-ILUMINA",
+        module_id: "-1",
         city_id: "11001",
         city: "Bogota, D.C.",
         code: ""

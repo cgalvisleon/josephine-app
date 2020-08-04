@@ -1,4 +1,5 @@
 import { http } from "../components/http";
+import environment from "../env/env";
 import { isOnLine, ShowOffLine } from "../components/utilities";
 
 export const Api = {
@@ -9,7 +10,7 @@ export const Api = {
       const params = {
         username: username,
         password: password,
-        app: "keepweb"
+        app: environment.app
       };
       return await http("POST", `signin`, params)
         .then(result => {
@@ -46,7 +47,7 @@ export const Api = {
         module_id: module_id,
         city_id: city_id,
         code: code,
-        app: "keepweb"
+        app: environment.app
       };
       return await http("POST", `signup`, params)
         .then(result => {
@@ -66,7 +67,7 @@ export const Api = {
         password: password,
         confirmation: confirmation,
         code: code,
-        app: "keepweb"
+        app: environment.app
       };
       return await http("POST", `forgot`, params)
         .then(result => {

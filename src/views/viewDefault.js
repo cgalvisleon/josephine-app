@@ -24,10 +24,11 @@ class ViewDefault extends React.Component {
   }
 
   render() {
+    console.log(this.state._view);
     if (this.state._view !== "" && this.state._view !== this.props.location.pathname) {
       return <Redirect to={this.state._view} push={true} />;
     }
-    return <React.Fragment></React.Fragment>;
+    return <React.Fragment />;
   }
 }
 
