@@ -35,14 +35,16 @@ function MenuProject(props) {
                 </React.Fragment>
               );
             })}
-            <Link className="dropdownItem" to="/inboxes/preferences">
-              <div className="dropdownItemLeftIcon">
-                <i className="fa fa-cog"></i>
-              </div>
-              <div className="dropdownItemContent">Preferencias</div>
-              <div className="dropdownItemRightIcon"></div>
-            </Link>
-            <div className="dropdownSpace"></div>
+            <div className={props.profile.projects.length === 0 ? "d-none" : ""}>
+              <Link className="dropdownItem" to="/inboxes/preferences">
+                <div className="dropdownItemLeftIcon">
+                  <i className="fa fa-cog"></i>
+                </div>
+                <div className="dropdownItemContent">Preferencias</div>
+                <div className="dropdownItemRightIcon"></div>
+              </Link>
+              <div className="dropdownSpace"></div>
+            </div>
             <Link className="dropdownItem" target="_blank" to="/help">
               <div className="dropdownItemLeftIcon">
                 <i className="far fa-question-circle"></i>

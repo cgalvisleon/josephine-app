@@ -46,4 +46,16 @@
   font-size: 16px;
   font-weight: 400;
   color: var(--mute);
+  text-align: center;
+}
+.__Nproject {
+  grid-column-end: 2;
+  grid-column-start: 2;
+  grid-row-end: 2;
+  grid-row-start: 2;
+  margin: auto;
+  font-size: 40px;
+  font-weight: 600;
+  color: var(--mute);
+  text-align: center;
 }
