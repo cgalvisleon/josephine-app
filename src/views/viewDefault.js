@@ -1,15 +1,16 @@
 import React from "react";
 import { Redirect } from "react-router-dom";
 import NotProject from "../pages/notproject";
-import { Loading, getView, Event, EventUnSubscribe, getProfile } from "../components/utilities";
+import { Loading, getView, Event, EventUnSubscribe, getProfile, getValue } from "../components/utilities";
 
 class ViewDefault extends React.Component {
   constructor(props) {
     super(props);
+    const profile = getProfile();
     Loading();
     this.state = {
       _view: getView(),
-      profile: getProfile()
+      projects: getValue(profile, "projects", [])
     };
   }
 
@@ -27,8 +28,8 @@ class ViewDefault extends React.Component {
 
   render() {
     if (this.state._view !== "" && this.state._view !== this.props.location.pathname) {
-      return <Redirect to={this.state._view} push={true} />;
-    } else if (this.state.profile.projects.length === 0) {
+      return <Redirect to={this.state._view || ""} push={true} />;
+    } else if (this.state.projects.length === 0) {
       return (
         <React.Fragment>
           <NotProject></NotProject>
