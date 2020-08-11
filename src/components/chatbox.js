@@ -22,6 +22,7 @@ class Chatbox extends React.Component {
       _id: "__Chatbox",
       userId: userId(),
       project_id: "-1",
+      rows: getVar("view_rows", "views", 30),
       display: "broadcastList",
       talk: {},
       data: {
@@ -83,7 +84,7 @@ class Chatbox extends React.Component {
     if (display === "broadcast") {
     } else {
       const search = this.state.data.search;
-      const rows = this.state.data.rows;
+      const rows = this.state.rows;
       if (e.scroll) {
         const move = e.move || 1;
         const page = this.state.data.page + move;

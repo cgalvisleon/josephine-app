@@ -29,6 +29,7 @@ class ViewContacts extends React.Component {
       name: "contacts",
       title: "Contactos",
       _view: getView(),
+      rows: getVar("view_rows", "views", 30),
       data: {
         project_id: "-1",
         int: 0,
@@ -83,7 +84,7 @@ class ViewContacts extends React.Component {
     const project_id = projectId();
     const state = getVar(project_id, "contacts_state", "0");
     const search = this.state.data.search;
-    const rows = this.state.data.rows;
+    const rows = this.state.rows;
     if (e.scroll) {
       const move = e.move || 1;
       const page = this.state.data.page + move;

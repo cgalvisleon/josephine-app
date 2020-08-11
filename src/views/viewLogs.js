@@ -10,7 +10,8 @@ import {
   Event,
   EventUnSubscribe,
   formatInteger,
-  updateList
+  updateList,
+  getVar
 } from "../components/utilities";
 import ModalLog from "../modals/modalLog";
 import Row from "../components/row";
@@ -23,6 +24,7 @@ class ViewLogs extends React.Component {
     this.state = {
       _id: "__ViewLogs",
       _view: getView(),
+      rows: getVar("view_rows", "views", 30),
       data: {
         int: 0,
         end: 0,
@@ -58,7 +60,7 @@ class ViewLogs extends React.Component {
 
   handleData = e => {
     const search = this.state.data.search;
-    const rows = this.state.data.rows;
+    const rows = this.state.rows;
     if (e.scroll) {
       const move = e.move || 1;
       const page = this.state.data.page + move;

@@ -31,6 +31,7 @@ class ViewSuports extends React.Component {
       project_id: project_id,
       _class: folder._class,
       _view: folder._view,
+      rows: getVar("view_rows", "views", 30),
       field: "",
       data: {
         list: [],
@@ -104,7 +105,7 @@ class ViewSuports extends React.Component {
     const _class = this.state._class;
     const state = this.state.data.state;
     const search = this.state.data.search;
-    const rows = this.state.data.rows;
+    const rows = this.state.rows;
     if (scroll) {
       const page = this.state.data.page + 1;
       Project.documents(project_id, _class, state, search, page, rows, this.state.data.list).then(result => {

@@ -1,7 +1,7 @@
 import React from "react";
 import ReactGallery from "reactive-blueimp-gallery";
 import "../styles/modal.scss";
-import { Loading, isOnLine, Subscribe, UnSubscribe, updateList, getValue } from "./utilities";
+import { Loading, isOnLine, Subscribe, UnSubscribe, updateList, getValue, getVar } from "./utilities";
 import { Api as Project } from "../api/project";
 
 class Images extends React.Component {
@@ -13,6 +13,7 @@ class Images extends React.Component {
       title: "Imagenes",
       name: "IMG",
       show: false,
+      rows: getVar("view_rows", "views", 30),
       object_id: getValue(props, "object_id", "-1"),
       data: {
         list: [
@@ -75,7 +76,7 @@ class Images extends React.Component {
     const _class = this.state.data._class;
     const state = this.state.data.state;
     const search = this.state.data.search;
-    const rows = this.state.data.rows;
+    const rows = this.state.rows;
     if (scroll) {
       const page = this.state.data.page + 1;
       Project.attachments(_id, _class, state, search, page, rows, this.state.data.list).then(result => {

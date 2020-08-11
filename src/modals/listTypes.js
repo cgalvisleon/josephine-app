@@ -1,7 +1,18 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "../styles/modal.scss";
-import { Loading, showModal, hideModal, Subscribe, UnSubscribe, isOnLine, getValue, emptyValue, updateList } from "../components/utilities";
+import {
+  Loading,
+  showModal,
+  hideModal,
+  Subscribe,
+  UnSubscribe,
+  isOnLine,
+  getValue,
+  emptyValue,
+  updateList,
+  getVar
+} from "../components/utilities";
 import ModalHeaderList from "../components/modalHeaderList";
 import ModalSearchMenu from "../components/modalSearchMenu";
 import ModalList from "../components/modalList";
@@ -19,6 +30,7 @@ class ListTypes extends React.Component {
       title: props.title || "Tipos",
       name: "types",
       show: false,
+      rows: getVar("view_rows", "views", 30),
       data: {
         list: [],
         state: getValue(props, "state", "0"),
@@ -114,7 +126,7 @@ class ListTypes extends React.Component {
     const _class = this.props._class;
     const state = this.state.data.state;
     const search = this.state.data.search;
-    const rows = this.state.data.rows;
+    const rows = this.state.rows;
     if (scroll) {
       const page = this.state.data.page + 1;
       Project.types(project_id, _class, state, search, page, rows, this.state.data.list).then(result => {

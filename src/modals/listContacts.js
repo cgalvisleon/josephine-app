@@ -1,7 +1,18 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "../styles/modal.scss";
-import { Loading, showModal, hideModal, Subscribe, UnSubscribe, isOnLine, getValue, emptyValue, updateList } from "../components/utilities";
+import {
+  Loading,
+  showModal,
+  hideModal,
+  Subscribe,
+  UnSubscribe,
+  isOnLine,
+  getValue,
+  emptyValue,
+  updateList,
+  getVar
+} from "../components/utilities";
 import ModalHeaderList from "../components/modalHeaderList";
 import ModalSearchMenu from "../components/modalSearchMenu";
 import ModalList from "../components/modalList";
@@ -19,6 +30,7 @@ class ListContacts extends React.Component {
       title: "Contactos",
       name: "contacts",
       show: false,
+      rows: getVar("view_rows", "views", 30),
       data: {
         list: [],
         state: "0",
@@ -113,7 +125,7 @@ class ListContacts extends React.Component {
     const project_id = this.props.project_id;
     const state = this.state.data.state;
     const search = this.state.data.search;
-    const rows = this.state.data.rows;
+    const rows = this.state.rows;
     if (scroll) {
       const page = this.state.data.page + 1;
       Project.contacts(project_id, state, search, page, rows, this.state.data.list).then(result => {

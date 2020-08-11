@@ -10,7 +10,8 @@ import {
   Subscribe,
   UnSubscribe,
   isOnLine,
-  updateList
+  updateList,
+  getVar
 } from "../components/utilities";
 import ModalUser from "../modals/modalUser";
 import ViewSearch from "../components/viewSearch";
@@ -27,6 +28,7 @@ class ViewUsers extends React.Component {
       name: "users",
       title: "Usuarios",
       _view: getView(),
+      rows: getVar("view_rows", "views", 30),
       data: {
         project_id: projectId(),
         int: 0,
@@ -94,7 +96,7 @@ class ViewUsers extends React.Component {
     const project_id = projectId();
     const state = this.state.data.state;
     const search = this.state.data.search;
-    const rows = this.state.data.rows;
+    const rows = this.state.rows;
     if (e.scroll) {
       const move = e.move || 1;
       const page = this.state.data.page + move;

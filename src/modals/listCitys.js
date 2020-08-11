@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "../styles/modal.scss";
-import { Loading, showModal, hideModal, emptyValue, getValue, getRow } from "../components/utilities";
+import { Loading, showModal, hideModal, emptyValue, getValue, getRow, getVar } from "../components/utilities";
 import ModalHeaderList from "../components/modalHeaderList";
 import ModalSearch from "../components/modalSearch";
 import ModalList from "../components/modalList";
@@ -18,6 +18,7 @@ class ListCitys extends React.Component {
       title: "Ciudades",
       name: name,
       show: false,
+      rows: getVar("view_rows", "views", 30),
       mains: [],
       main_id: "-1",
       data: {
@@ -96,7 +97,7 @@ class ListCitys extends React.Component {
   handleData = scroll => {
     const main_id = this.state.main_id;
     const search = this.state.data.search;
-    const rows = this.state.data.rows;
+    const rows = this.state.rows;
     if (scroll) {
       const page = this.state.data.page + 1;
       Project.dpas(main_id, "CITY", "0", search, page, rows, this.state.data.list).then(result => {
