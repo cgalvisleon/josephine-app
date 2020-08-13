@@ -181,7 +181,7 @@ class ModalUpload extends React.Component {
                       <div className="input-group input-group-sm custom-file mb-2 pointer">
                         <input
                           type="file"
-                          className="custom-file-input"
+                          className="custom-file-input pointer"
                           id="customFile"
                           lang="es"
                           accept={getValue(this.state.data, "_class", "DOCUMENT") === "IMAGE" ? "image/*" : "application/*"}
