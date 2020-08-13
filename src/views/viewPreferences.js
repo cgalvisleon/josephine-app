@@ -10,7 +10,8 @@ import {
   Event,
   getDifferenceInDays,
   chart,
-  setFocus
+  setFocus,
+  project
 } from "../components/utilities";
 import { Input, Section, Phone, City, SelectType, Button, Image } from "../components/inputs";
 import { Api as Project } from "../api/project";
@@ -73,6 +74,26 @@ class ViewSettings extends React.Component {
     });
   };
 
+  handleChangeChkModule = e => {
+    const item = e.item;
+    const index = e.index;
+    const data = this.state.data;
+    const project_id = data._id;
+    const modules = this.state.data.modules;
+    item.chk = !item.chk;
+    modules[index] = item;
+    data.modules = modules;
+    Project.chkModules(project_id, item._id, item.chk).then(result => {
+      this.setState({
+        data: {
+          ...this.state.data,
+          modules: modules
+        }
+      });
+      Emitter("__project", this.state.data);
+    });
+  };
+
   handleSelCity = e => {
     this.setState({
       data: {
@@ -106,6 +127,12 @@ class ViewSettings extends React.Component {
       this.setState({ data: result.data, old: result.data });
       setFocus(`${this.state._id}_caption`);
     });
+  };
+
+  handleModule = module => {
+    const modules = project().modules || [];
+    const index = modules.findIndex(element => element._id === module && element.chk === true);
+    return index > -1;
   };
 
   componentDidMount() {
@@ -304,9 +331,19 @@ class ViewSettings extends React.Component {
                                 </div>
                                 <div className="tab-item-detail">
                                   <div className="name">{item.caption}</div>
-                                  <div className="label">
-                                    Termina en:
-                                    <strong className="ml-1">{getDifferenceInDays(item, "date_end", true)}</strong>
+                                  <div className="custom-control custom-switch pointer">
+                                    <input
+                                      className="custom-control-input"
+                                      type="checkbox"
+                                      id={`${item._id}_CheckboxRural`}
+                                      name="chk"
+                                      checked={item.chk}
+                                      onChange={() => this.handleChangeChkModule({ item, index: i })}
+                                    />
+                                    <label className="custom-control-label custom-label pt-0 pl-1" htmlFor={`${item._id}_CheckboxRural`}>
+                                      Termina en
+                                      <strong className="ml-1">{getDifferenceInDays(item, "date_end", true)}</strong>
+                                    </label>
                                   </div>
                                 </div>
                               </div>
@@ -321,7 +358,7 @@ class ViewSettings extends React.Component {
                       role="tabpanel"
                       aria-labelledby={`${this.state._id}-nav-2-tab`}
                     >
-                      <div className="tab-it"></div>
+                      <div className="tab-group"></div>
                     </div>
                   </div>
                 </div>
