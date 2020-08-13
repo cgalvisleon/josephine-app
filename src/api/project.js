@@ -153,6 +153,40 @@ export const Api = {
         });
     }
   },
+  modules: async function(project_id) {
+    if (!isOnLine) {
+      return ShowOffLine();
+    } else {
+      return await http("GET", `projects/modules/${project_id}`)
+        .then(result => {
+          const msg = getValue(result, "msg", "");
+          if (msg !== "") {
+            ShowAlert(result.message);
+          }
+          return result;
+        })
+        .catch(err => {
+          throw err;
+        });
+    }
+  },
+  chkModules: async function(project_id, module_id, chk) {
+    if (!isOnLine) {
+      return ShowOffLine();
+    } else {
+      return await http("POST", `projects/modules/${project_id}`, { module_id, chk })
+        .then(result => {
+          const msg = getValue(result, "msg", "");
+          if (msg !== "") {
+            ShowAlert(result.message);
+          }
+          return result;
+        })
+        .catch(err => {
+          throw err;
+        });
+    }
+  },
   references: async function(id, state, search, page, rows, list) {
     if (!isOnLine) {
       return ShowOffLine();
