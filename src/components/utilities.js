@@ -429,10 +429,13 @@ export const formatDHM = function(value) {
   return Y > 0 ? `${Y}A ${M}M ${d}D ${h}H ${m}M` : M > 0 ? `${M}M ${d}D ${h}H ${m}M` : `${d}D ${h}H ${m}M`;
 };
 
-export const setFocus = function(id) {
-  setTimeout(() => {
-    focus(id);
-  }, 1000);
+export const setFocus = function(id, focused) {
+  focused = focus === undefined ? true : focused;
+  if (focused) {
+    setTimeout(() => {
+      focus(id);
+    }, 1000);
+  }
 };
 
 export const foldersCount = function(folders, counts, state) {

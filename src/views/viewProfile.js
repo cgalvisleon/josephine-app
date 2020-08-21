@@ -320,7 +320,7 @@ class ViewProfile extends React.Component {
                             <React.Fragment key={i}>
                               <div className="tab-item">
                                 <div className="tab-item-logo">
-                                  <img className="avatar" src={item.logo || "/logo.svg"} alt="" />
+                                  <img className="avatar" src={item.avatar || "/logo.svg"} alt="" />
                                 </div>
                                 <div className="tab-item-detail">
                                   <div className="name">{item.caption}</div>

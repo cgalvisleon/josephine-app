@@ -10,7 +10,7 @@ function ItemProject(props) {
     <React.Fragment>
       <div className={props.project._id === props.project_id ? "dropdownProject active" : "dropdownProject"} onClick={setProject}>
         <div className="dropdownProjectLogo">
-          <img className="avatar" src={props.project.logo || "/logo.svg"} alt="" />
+          <img className="avatar" src={props.project.avatar || "/logo.svg"} alt="" />
         </div>
         <div className="dropdownProjectInfo">
           <div className="name">{props.project.caption || "Nombre usuario"}</div>
