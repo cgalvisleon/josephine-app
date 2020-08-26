@@ -5,11 +5,10 @@ const environment = {
   mobile: "+57 (301) 621 9802",
   copyright: "© 2016-2020",
   storage: "dploy-user",
-  production: false,
-  app: "dploy",
-  url: "https://api.dploy.site",
-  url_dev: "http://localhost:3000",
-  mapbox: "pk.eyJ1Ijoic2VydmljaW9zIiwiYSI6ImNpdzFjZmcyazA4YmIybm8ycXR0dWxiY3EifQ.78sqPHHt3mYQ8TymakHetA"
+  production: process.env.NODE_ENV === "production",
+  app: process.env.APP || "josephine",
+  url: process.env.URL || "http://192.168.0.3:3000",
+  mapbox: process.env.MAPBOX_KEY || "pk.eyJ1Ijoic2VydmljaW9zIiwiYSI6ImNpdzFjZmcyazA4YmIybm8ycXR0dWxiY3EifQ.78sqPHHt3mYQ8TymakHetA"
 };
 
 module.exports = environment;

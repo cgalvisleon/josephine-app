@@ -1,7 +1,6 @@
 import { getToken, getSession, OutLoading, Loading } from "./utilities";
-import environment from "../env/env";
-const production = process.env.NODE_ENV !== "development";
-const apiUrl = production ? environment.url : environment.url_dev;
+const production = process.env.NODE_ENV === "production";
+const apiUrl = process.env.URL || "http://192.168.0.3:3000";
 
 const getHeaders = function() {
   const date = new Date();

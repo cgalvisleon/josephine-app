@@ -12,8 +12,8 @@ import differenceInDays from "date-fns/differenceInDays";
 import differenceInMinutes from "date-fns/differenceInMinutes";
 import esLA from "../assets/locale/es-la";
 import { MSG408 } from "./msg";
-const production = process.env.NODE_ENV !== "development";
-const apiUrl = production ? "https://api.dploy.site" : "http://localhost:3000";
+const production = process.env.NODE_ENV === "production";
+const apiUrl = process.env.URL || "http://192.168.0.3:3000";
 const socketIo = io(apiUrl);
 
 window.addEventListener("offline", () => {

@@ -74,7 +74,14 @@ class ModalUser extends React.Component {
   };
 
   handleShow = () => {
-    this.setState({ show: true, change: false });
+    if (this.props.isNew) {
+      this.setState({ show: true, change: false });
+    } else {
+      const _id = getValue(this.props.data, "_id", "-1");
+      if (_id !== "-1") {
+        this.setState({ show: true, change: false });
+      }
+    }
   };
 
   handleClose = () => {
