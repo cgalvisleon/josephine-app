@@ -1,21 +1,12 @@
 import React from "react";
 import { Link, Redirect } from "react-router-dom";
 import "../styles/signin.scss";
-import {
-  Loading,
-  ShowAlert,
-  ShowDanger,
-  setSessionVar,
-  isSignIn,
-  getValue,
-  focus,
-  validCellPhone,
-  validEmail
-} from "../components/utilities";
+import { Loading, ShowAlert, ShowDanger, setSessionVar, getValue, focus, validCellPhone, validEmail } from "../components/utilities";
 import TopBar from "../components/topbar";
 import BottomBar from "../components/bottombar";
 import { Api } from "../api/authentication";
 import { City, SelectType } from "../components/inputs";
+import { connect } from "react-redux";
 
 class Register extends React.Component {
   constructor(props) {
@@ -161,7 +152,7 @@ class Register extends React.Component {
   }
 
   render() {
-    if (isSignIn()) {
+    if (this.props.signin) {
       return <Redirect to="/inboxes" push={true} />;
     }
     return (
@@ -371,4 +362,8 @@ class Register extends React.Component {
   }
 }
 
-export default Register;
+function mapStateToProps(state) {
+  return state;
+}
+
+export default connect(mapStateToProps)(Register);

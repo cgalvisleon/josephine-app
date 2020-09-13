@@ -10,7 +10,6 @@ import {
   setVar,
   getSession,
   getToken,
-  isSignIn,
   Event,
   EventUnSubscribe,
   isOnLine,
@@ -31,6 +30,7 @@ import { MSG002 } from "../components/msg";
 import SideBar from "../components/sidebar";
 import Chatbox from "../components/chatbox";
 import { Api as Profile } from "../api/profile";
+import { connect } from "react-redux";
 
 class Inboxes extends React.Component {
   constructor(props) {
@@ -206,7 +206,7 @@ class Inboxes extends React.Component {
   }
 
   render() {
-    if (!isSignIn()) {
+    if (!this.props.signin) {
       return <Redirect to="/signin" push={true} />;
     }
     return (
@@ -248,4 +248,8 @@ class Inboxes extends React.Component {
   }
 }
 
-export default Inboxes;
+function mapStateToProps(state) {
+  return state;
+}
+
+export default connect(mapStateToProps)(Inboxes);

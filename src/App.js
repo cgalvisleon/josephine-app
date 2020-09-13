@@ -1,5 +1,7 @@
 import React from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { Provider } from "react-redux";
+import store from "./redux/store";
 import "./App.scss";
 
 /** Layouts */
@@ -35,39 +37,41 @@ import ViewLogs from "./views/viewLogs";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Layout>
-        <Switch>
-          <Route exact path="/" component={Home} />
-          <Route exact path="/help" component={Help} />
-          <Route exact path="/signin" component={Signin} />
-          <Route exact path="/register" component={Register} />
-          <Route exact path="/forgot" component={Forgot} />
-          <Route exact path="/seek" component={Seek} />
-          <Route exact path="/issues" component={Issues} />
-          <Route exact path="/politics" component={Politics} />
-          <Route exact path="/agreements" component={Agreements} />
-          <Route exact path="/terms" component={Terms} />
-          <Route exact path="/inboxes*">
-            <Inboxes>
-              <Switch>
-                <Route exact path="/inboxes" component={ViewDefault} />
-                <Route exact path="/inboxes/users" component={ViewUsers} />
-                <Route exact path="/inboxes/contacts" component={ViewContacts} />
-                <Route exact path="/inboxes/profile" component={ViewProfile} />
-                <Route exact path="/inboxes/preferences" component={viewPreferences} />
-                <Route exact path="/inboxes/devtoolbox" component={ViewDevToolBox} />
-                <Route exact path="/inboxes/suports" component={ViewSuports} />
-                <Route exact path="/inboxes/logs" component={ViewLogs} />
+    <Provider store={store}>
+      <BrowserRouter>
+        <Layout>
+          <Switch>
+            <Route exact path="/" component={Home} />
+            <Route exact path="/help" component={Help} />
+            <Route exact path="/signin" component={Signin} />
+            <Route exact path="/register" component={Register} />
+            <Route exact path="/forgot" component={Forgot} />
+            <Route exact path="/seek" component={Seek} />
+            <Route exact path="/issues" component={Issues} />
+            <Route exact path="/politics" component={Politics} />
+            <Route exact path="/agreements" component={Agreements} />
+            <Route exact path="/terms" component={Terms} />
+            <Route exact path="/inboxes*">
+              <Inboxes>
+                <Switch>
+                  <Route exact path="/inboxes" component={ViewDefault} />
+                  <Route exact path="/inboxes/users" component={ViewUsers} />
+                  <Route exact path="/inboxes/contacts" component={ViewContacts} />
+                  <Route exact path="/inboxes/profile" component={ViewProfile} />
+                  <Route exact path="/inboxes/preferences" component={viewPreferences} />
+                  <Route exact path="/inboxes/devtoolbox" component={ViewDevToolBox} />
+                  <Route exact path="/inboxes/suports" component={ViewSuports} />
+                  <Route exact path="/inboxes/logs" component={ViewLogs} />
 
-                <Route component={ViewNotFound} />
-              </Switch>
-            </Inboxes>
-          </Route>
-          <Route component={NotFound} />
-        </Switch>
-      </Layout>
-    </BrowserRouter>
+                  <Route component={ViewNotFound} />
+                </Switch>
+              </Inboxes>
+            </Route>
+            <Route component={NotFound} />
+          </Switch>
+        </Layout>
+      </BrowserRouter>
+    </Provider>
   );
 }
 

@@ -1,10 +1,11 @@
 import React from "react";
 import { Link, Redirect } from "react-router-dom";
 import "../styles/signin.scss";
-import { Loading, ShowAlert, setSessionVar, ShowDanger, isSignIn, getValue, focus } from "../components/utilities";
+import { Loading, ShowAlert, setSessionVar, ShowDanger, getValue, focus } from "../components/utilities";
 import TopBar from "../components/topbar";
 import BottomBar from "../components/bottombar";
 import { Api as Authentication } from "../api/authentication";
+import { connect } from "react-redux";
 
 class Signin extends React.Component {
   constructor(props) {
@@ -84,7 +85,7 @@ class Signin extends React.Component {
   }
 
   render() {
-    if (isSignIn()) {
+    if (this.props.signin) {
       return <Redirect to="/inboxes" push={true} />;
     }
     return (
@@ -170,4 +171,8 @@ class Signin extends React.Component {
   }
 }
 
-export default Signin;
+function mapStateToProps(state) {
+  return state;
+}
+
+export default connect(mapStateToProps)(Signin);

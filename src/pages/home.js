@@ -2,8 +2,9 @@ import React from "react";
 import { Link, Redirect } from "react-router-dom";
 import "../styles/home.scss";
 import { Navbar, Nav } from "react-bootstrap";
-import { Loading, App, isSignIn } from "../components/utilities";
+import { Loading, App } from "../components/utilities";
 import * as Scroll from "react-scroll";
+import { connect } from "react-redux";
 const Anchor = Scroll.Link;
 const Element = Scroll.Element;
 
@@ -75,7 +76,7 @@ class Home extends React.Component {
   }
 
   render() {
-    if (isSignIn()) {
+    if (this.props.signin) {
       return <Redirect to="/inboxes" push={true} />;
     }
     return (
@@ -333,4 +334,8 @@ class Home extends React.Component {
   }
 }
 
-export default Home;
+function mapStateToProps(state) {
+  return state;
+}
+
+export default connect(mapStateToProps)(Home);

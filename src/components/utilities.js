@@ -786,12 +786,6 @@ export const setProjectId = function(params) {
   return params;
 };
 
-export const isSignIn = function() {
-  const session = getSession();
-  const result = session !== "";
-  return result;
-};
-
 export const Socket = {
   themes: {},
   subscribe: function(theme, callback) {
