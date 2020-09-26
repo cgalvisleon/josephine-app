@@ -12,6 +12,7 @@ import differenceInDays from "date-fns/differenceInDays";
 import differenceInMinutes from "date-fns/differenceInMinutes";
 import esLA from "../assets/locale/es-la";
 import { MSG408 } from "./msg";
+import { Actions as Basic } from "../redux/actions/basic";
 const production = process.env.NODE_ENV === "production";
 const apiUrl = process.env.URL || "http://192.168.0.3:3000";
 const socketIo = io(apiUrl);
@@ -841,58 +842,30 @@ export const UnSubscribe = function(theme) {
   Socket.unSubscribe(theme);
 };
 
-export const OnLine = function(callback) {
-  Event("__online", callback);
-};
-
-export const OutLine = function(callback) {
-  EventUnSubscribe("__online", callback);
-};
-
-export const OnLoading = function(callback) {
-  Event("__loading", callback);
-};
-
 export const Loading = function(tag) {
   tag = tag || "";
-  Emitter("__loading", { loading: true, tag });
+  Basic.loading(tag);
 };
 
 export const OutLoading = function(tag) {
   tag = tag || "";
-  Emitter("__loading", { loading: false, tag });
-};
-
-export const OnAlert = function(callback) {
-  Event("__alert", callback);
+  Basic.outLoading(tag);
 };
 
 export const ShowAlert = function(message) {
-  Emitter("__alert", { show: true, message: message, type: "" });
-  setTimeout(() => {
-    Emitter("__alert", false);
-  }, 3000);
+  Basic.showAlert(message);
 };
 
 export const ShowDanger = function(message) {
-  Emitter("__alert", { show: true, message: message, type: "danger" });
-  setTimeout(() => {
-    Emitter("__alert", false);
-  }, 3000);
+  Basic.showDanger(message);
 };
 
 export const ShowWarning = function(message) {
-  Emitter("__alert", { show: true, message: message, type: "warning" });
-  setTimeout(() => {
-    Emitter("__alert", false);
-  }, 3000);
+  Basic.showWarning(message);
 };
 
 export const ShowInfo = function(message) {
-  Emitter("__alert", { show: true, message: message, type: "info" });
-  setTimeout(() => {
-    Emitter("__alert", false);
-  }, 3000);
+  Basic.showInfo(message);
 };
 
 export const ShowOffLine = function() {

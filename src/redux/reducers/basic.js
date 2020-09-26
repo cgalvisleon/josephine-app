@@ -1,4 +1,4 @@
-import { SET_TOKEN, LOADING, ALERT, SIGNIN, SIGNOUT } from "../actionTypes";
+import { SCHEME, SET_TOKEN, LOADING, ALERT, ONLINE, SIGNIN, SIGNOUT } from "../actionTypes";
 
 export default function basic(state, action) {
   switch (action.type) {
@@ -20,6 +20,12 @@ export default function basic(state, action) {
         alert: action.payload
       };
     }
+    case ONLINE: {
+      return {
+        ...state,
+        online: action.payload
+      };
+    }
     case SIGNIN: {
       return {
         ...state,
@@ -29,7 +35,7 @@ export default function basic(state, action) {
     case SIGNOUT: {
       return {
         ...state,
-        signin: false
+        ...SCHEME
       };
     }
     default:
