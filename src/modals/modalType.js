@@ -1,16 +1,16 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "../styles/modal.scss";
-import { Loading, showModal, hideModal, projectId, ShowInfo, msg, getValue, genId } from "../components/utilities";
+import { showModal, hideModal, ShowInfo, msg, getValue, genId } from "../components/utilities";
 import ModalHeader from "../components/modalHeader";
 import { Textarea, Section } from "../components/inputs";
 import ModalFooter from "../components/modalFooter";
-import { Api as Project } from "../api/project";
+import { Api as Project } from "../services/project";
+import { connect } from "react-redux";
 
 class ModalType extends React.Component {
   constructor(props) {
     super(props);
-    Loading();
     const data = this.handleScheme(props.data);
     this.state = {
       _id: "__modalType",
@@ -24,7 +24,7 @@ class ModalType extends React.Component {
 
   handleScheme = data => {
     return {
-      project_id: projectId(),
+      project_id: this.props.project_id(),
       _class: getValue(data, "_class", "-1"),
       _state: "0",
       _id: genId("-1"),
@@ -44,7 +44,8 @@ class ModalType extends React.Component {
   };
 
   handleExecute = e => {
-    if (typeof this.props.setData === "function") {
+    const _state = this.props._state || "0";
+    if (typeof this.props.setData === "function" && _state === "0") {
       this.props.setData(e);
     }
     this.handleHide();
@@ -57,11 +58,17 @@ class ModalType extends React.Component {
 
   handleShow = () => {
     if (this.props.isFind) {
-      if (this.props._id !== "-1") {
+      const _id = getValue(this.props, "_id", "-1");
+      if (_id !== "-1") {
         this.setState({ show: true, change: false });
       }
-    } else {
+    } else if (this.props.isNew) {
       this.setState({ show: true, change: false });
+    } else {
+      const _id = getValue(this.props.data, "_id", "-1");
+      if (_id !== "-1") {
+        this.setState({ show: true, change: false });
+      }
     }
   };
 
@@ -220,6 +227,7 @@ class ModalType extends React.Component {
                     <ModalFooter
                       single="tipo"
                       plural="el tipo"
+                      project_id={this.state.data.project_id}
                       _state={this.state.data._state}
                       isNew={this.props.isNew}
                       onFinish={this.handleFinish}
@@ -239,4 +247,13 @@ class ModalType extends React.Component {
   }
 }
 
-export default ModalType;
+function mapStateToProps(state) {
+  return {
+    signin: state.sistem.signin,
+    project_id: state.sistem.project._id || "-1",
+    _view: state.sistem.folder._view || "",
+    online: state.sistem.online
+  };
+}
+
+export default connect(mapStateToProps)(ModalType);

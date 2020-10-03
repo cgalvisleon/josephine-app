@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import { Provider } from "react-redux";
-import store from "./redux/store";
+import store from "./services/store";
 import "./App.scss";
 
 /** Layouts */
@@ -13,6 +13,7 @@ import Home from "./pages/home";
 import NotFound from "./pages/notfound";
 import Help from "./pages/help";
 import Signin from "./pages/signin";
+import Match360 from "./pages/match360";
 import Register from "./pages/register";
 import Forgot from "./pages/forgot";
 import Seek from "./pages/seek";
@@ -44,6 +45,7 @@ function App() {
             <Route exact path="/" component={Home} />
             <Route exact path="/help" component={Help} />
             <Route exact path="/signin" component={Signin} />
+            <Route exact path="/match360" component={Match360} />
             <Route exact path="/register" component={Register} />
             <Route exact path="/forgot" component={Forgot} />
             <Route exact path="/seek" component={Seek} />

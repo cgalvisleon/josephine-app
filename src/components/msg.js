@@ -12,3 +12,5 @@ export const MSG408 = {
   message: "No hay conexión a internet",
   data: {}
 };
+export const ALERT001 = "Debes guardar primero el documento maestro";
+export const ALERT002 = "Debes guardar primero tus cambios";

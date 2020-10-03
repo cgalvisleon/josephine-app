@@ -2,15 +2,17 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "../styles/modal.scss";
 import { pdf, xls } from "../components/http";
-import { Loading, showModal, hideModal, toolTip, getValue, getData, getRow, userId, projectId } from "../components/utilities";
+import { showModal, hideModal, toolTip, getValue, getData, getRowValue } from "../components/utilities";
 import DateTime from "../components/dateTime";
 import ModalHeader from "../components/modalHeader";
-import { Api as System } from "../api/system";
+import { Api as System } from "../services/system";
+import { connect } from "react-redux";
+import environment from "../env/env";
+const apiUrl = environment.url;
 
 class ModalPrint extends React.Component {
   constructor(props) {
     super(props);
-    Loading();
     const name = "ModalPrint";
     this.state = {
       _id: "__modalPrint",
@@ -67,17 +69,15 @@ class ModalPrint extends React.Component {
     const select = this.state.select;
     const params = this.props.params;
     const filters = this.props.filters;
-    let project_id = projectId();
+    console.log(params);
+    let project_id = this.props.project_id;
     let _id = getValue(params, "_id", "-1");
-    let user_id = userId();
-    project_id = await System.secret(project_id, project_id);
-    _id = await System.secret(_id, project_id);
-    user_id = await System.secret(user_id, project_id);
-    const filter1 = getRow(filters, 0, "value", "");
-    const filter2 = getRow(filters, 1, "value", "");
-    const filter3 = getRow(filters, 2, "value", "");
-    const filter4 = getRow(filters, 3, "value", "");
-    const filter5 = getRow(filters, 4, "value", "");
+    let user_id = this.props.user_id;
+    const filter1 = getRowValue(filters, 0, "value", "");
+    const filter2 = getRowValue(filters, 1, "value", "");
+    const filter3 = getRowValue(filters, 2, "value", "");
+    const filter4 = getRowValue(filters, 3, "value", "");
+    const filter5 = getRowValue(filters, 4, "value", "");
     let url = getData(select, "url_print", "");
     url = url.replace("$project_id", project_id);
     url = url.replace("$_id", _id);
@@ -92,14 +92,14 @@ class ModalPrint extends React.Component {
 
   handlePrint = async e => {
     const url = await this.handleFilter();
-    pdf(url);
+    pdf(`${apiUrl}/${url}`);
     this.handleExeute();
     this.handleHide();
   };
 
   handleExport = async e => {
     const url = await this.handleFilter();
-    xls(url);
+    xls(`${apiUrl}/${url}`);
     this.handleExeute();
     this.handleHide();
   };
@@ -110,7 +110,7 @@ class ModalPrint extends React.Component {
 
   handleData = () => {
     const params = this.props.params;
-    const project_id = getValue(params, "project_id", "-1");
+    const project_id = this.props.project_id;
     const _class = getValue(params, "_class", "-1");
     const single = getValue(params, "single", false);
     System.prints(project_id, _class, single).then(result => {
@@ -269,4 +269,14 @@ class ModalPrint extends React.Component {
   }
 }
 
-export default ModalPrint;
+function mapStateToProps(state) {
+  return {
+    signin: state.sistem.signin,
+    project_id: state.sistem.project._id || "-1",
+    _class: state.sistem.folder._class,
+    _view: state.sistem.folder._view || "",
+    user_id: state.sistem.profile._id || "-1"
+  };
+}
+
+export default connect(mapStateToProps)(ModalPrint);

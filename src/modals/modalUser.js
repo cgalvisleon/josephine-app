@@ -1,17 +1,17 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "../styles/modal.scss";
-import { Loading, showModal, hideModal, projectId, setFocus, getValue, genId } from "../components/utilities";
+import { showModal, hideModal, setFocus, getValue, genId } from "../components/utilities";
 import ModalHeader from "../components/modalHeader";
 import { Typehead, SelectType } from "../components/inputs";
-import { ApiTypehead } from "../api/typehead";
-import { Api as Project } from "../api/project";
+import { ApiTypehead } from "../services/typehead";
+import { Api as Project } from "../services/project";
 import ModalFooter from "../components/modalFooter";
+import { connect } from "react-redux";
 
 class ModalUser extends React.Component {
   constructor(props) {
     super(props);
-    Loading();
     const data = this.handleScheme();
     this.state = {
       _id: "__modalUser",
@@ -25,7 +25,7 @@ class ModalUser extends React.Component {
 
   handleScheme = e => {
     return {
-      project_id: projectId(),
+      project_id: this.props.project_id,
       _class: "USER",
       _state: "0",
       _id: genId("-1"),
@@ -62,7 +62,8 @@ class ModalUser extends React.Component {
   };
 
   handleExecute = e => {
-    if (typeof this.props.setData === "function") {
+    const _state = this.props._state || "0";
+    if (typeof this.props.setData === "function" && _state === "0") {
       this.props.setData(e);
     }
     this.handleHide();
@@ -125,9 +126,7 @@ class ModalUser extends React.Component {
       change: e.change
     });
     showModal(this.state._id);
-    if (e.focusInt) {
-      setFocus(`${this.state._id}_caption`);
-    }
+    setFocus(`${this.state._id}_caption`, e.focusInt);
   };
 
   handleData = focusInt => {
@@ -219,7 +218,7 @@ class ModalUser extends React.Component {
                               className="form-control"
                               name="profile_tp"
                               _state={this.state.data._state}
-                              projectId={this.state.project_id}
+                              projectId={this.state.data.project_id}
                               _class="PROFILE_TP"
                               value={this.state.data.profile_tp}
                               onChange={this.handleChange}
@@ -251,4 +250,13 @@ class ModalUser extends React.Component {
   }
 }
 
-export default ModalUser;
+function mapStateToProps(state) {
+  return {
+    signin: state.sistem.signin,
+    project_id: state.sistem.project._id || "-1",
+    _view: state.sistem.folder._view || "",
+    online: state.sistem.online
+  };
+}
+
+export default connect(mapStateToProps)(ModalUser);

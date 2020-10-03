@@ -29,9 +29,8 @@ class Home extends React.Component {
         },
         {
           _id: 3,
-          name: "Match 365",
-          description:
-            "Herramienta que permite la automatización de procesos y facilita la interacción con usuarios, mediante un bot bajo la plataforma Telegram, con una disponibilidad 24/7 los 365 días del año."
+          name: "Match 360",
+          description: "Una forma diferente de iniciar sesión, de registrar usuarios de tu sistema."
         }
       ],
       features: [
@@ -76,7 +75,7 @@ class Home extends React.Component {
   }
 
   render() {
-    if (this.props.signin) {
+    if (this.props.sistem.signin) {
       return <Redirect to="/inboxes" push={true} />;
     }
     return (
@@ -166,6 +165,9 @@ class Home extends React.Component {
                     </Link>
                     <p className="lead">{this.state.products[2].description}</p>
                   </div>
+                  <Link className="btn btn-lg btn-primary product-register" to="/match360">
+                    Iniciar sessión &raquo;
+                  </Link>
                 </div>
               </Element>
             </div>

@@ -1,20 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "../styles/view.scss";
-import {
-  Loading,
-  getView,
-  projectId,
-  Emitter,
-  EventUnSubscribe,
-  Event,
-  getDifferenceInDays,
-  chart,
-  setFocus,
-  project
-} from "../components/utilities";
+import { Loading, getDifferenceInDays, chart, setFocus } from "../components/utilities";
 import { Input, Section, Phone, City, SelectType, Button, Image } from "../components/inputs";
-import { Api as Project } from "../api/project";
+import { Api as Project } from "../services/project";
+import { Actions as Sistem } from "../services/actions/sistem";
+import { connect } from "react-redux";
 
 class ViewSettings extends React.Component {
   constructor(props) {
@@ -22,7 +13,6 @@ class ViewSettings extends React.Component {
     Loading();
     this.state = {
       _id: "__ViewSettings",
-      _view: getView(),
       data: {
         _id: "-1",
         _state: "0",
@@ -41,18 +31,13 @@ class ViewSettings extends React.Component {
         logo: "",
         header_foto: "",
         _data: {},
-        modules: []
+        modules: [],
+        vars: []
       },
       old: {},
       change: false
     };
   }
-
-  eventSetProject = e => {
-    if (e._id !== this.state.data._id) {
-      this.handleData(e);
-    }
-  };
 
   handleChange = e => {
     this.setState({
@@ -81,16 +66,33 @@ class ViewSettings extends React.Component {
     const project_id = data._id;
     const modules = this.state.data.modules;
     item.chk = !item.chk;
-    modules[index] = item;
-    data.modules = modules;
     Project.chkModules(project_id, item._id, item.chk).then(result => {
+      modules[index] = result.data;
+      data.modules = modules;
       this.setState({
         data: {
           ...this.state.data,
           modules: modules
         }
       });
-      Emitter("__project", this.state.data);
+    });
+  };
+
+  handleChangeVar = e => {
+    const data = this.state.data;
+    const vars = data.vars;
+    const item = e.item;
+    const index = e.index;
+    if (item.value === "TRUE") {
+      item.value = "FALSE";
+    } else {
+      item.value = "TRUE";
+    }
+    vars[index] = item;
+    data.vars = vars;
+    this.setState({
+      data: data,
+      change: true
     });
   };
 
@@ -114,37 +116,43 @@ class ViewSettings extends React.Component {
   handleSetData = () => {
     if (this.state.change) {
       Project.setProject(this.state.data._id, this.state.data).then(result => {
-        this.setState({ data: result.data, change: false });
-        Emitter("__profile", {});
-        Emitter("__project", result.data);
+        this.setState({
+          data: result.data,
+          change: false
+        });
+        Sistem.setProject(result.data);
       });
     }
   };
 
-  handleData = e => {
-    const id = e._id;
+  handleData = () => {
+    const id = this.props.project_id;
     Project.project(id).then(result => {
-      this.setState({ data: result.data, old: result.data });
+      this.setState({
+        data: result.data,
+        old: result.data
+      });
       setFocus(`${this.state._id}_caption`);
     });
   };
 
   handleModule = module => {
-    const modules = project().modules || [];
+    const modules = this.props.project.modules || [];
     const index = modules.findIndex(element => element._id === module && element.chk === true);
     return index > -1;
   };
 
   componentDidMount() {
-    Event("__project", this.eventSetProject);
-    this.handleData({ _id: projectId() });
+    this.handleData();
   }
 
-  componentDidUpdate(prevProps, prevState) {}
-
-  componentWillUnmount() {
-    EventUnSubscribe("__project", this.eventSetProject);
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.project_id !== this.props.project_id) {
+      this.handleData();
+    }
   }
+
+  componentWillUnmount() {}
 
   render() {
     return (
@@ -155,7 +163,7 @@ class ViewSettings extends React.Component {
               <div className="view-object">
                 <div className="view-detail">
                   <div className="view-detail-title">
-                    <Link className="btn btn-link btn-sm float-left" to={this.state._view} onClick={this.handleGoBack}>
+                    <Link className="btn btn-link btn-sm float-left" to={this.props._view} onClick={this.handleGoBack}>
                       <i className="fas fa-arrow-left"></i>
                     </Link>
                     <div className="text">{this.state.data.caption}</div>
@@ -178,7 +186,7 @@ class ViewSettings extends React.Component {
                         />
                         <div className="row">
                           <div className="col-sm-12 edit">
-                            <Button className="btn btn-primary btn-sm float-right" onClick={this.handleSetData}>
+                            <Button className="btn btn-primary btn-sm float-right" onClick={() => this.handleSetData()}>
                               Aceptar
                             </Button>
                           </div>
@@ -358,7 +366,32 @@ class ViewSettings extends React.Component {
                       role="tabpanel"
                       aria-labelledby={`${this.state._id}-nav-2-tab`}
                     >
-                      <div className="tab-group"></div>
+                      <div className="tab-group">
+                        <div
+                          className={this.handleModule("MODULE-ILUMINA") ? "pb-2" : this.handleModule("MODULE-REDIST") ? "pb-2" : "d-none"}
+                        ></div>
+                        <div className="tab-group row pl-0 pr-0 border-top">
+                          <div className="form-group col-sm-12 mb-0">
+                            {this.state.data.vars.map((item, index) => {
+                              return (
+                                <div key={index} className="custom-control custom-switch pointer">
+                                  <input
+                                    className="custom-control-input"
+                                    type="checkbox"
+                                    id={`CheckboxVar${index}`}
+                                    name="controlConsumptions"
+                                    checked={item.value === "TRUE"}
+                                    onChange={() => this.handleChangeVar({ item, index })}
+                                  />
+                                  <label className="custom-control-label custom-label pt-0 pl-1" htmlFor={`CheckboxVar${index}`}>
+                                    {item.caption}
+                                  </label>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -371,4 +404,16 @@ class ViewSettings extends React.Component {
   }
 }
 
-export default ViewSettings;
+function mapStateToProps(state) {
+  return {
+    signin: state.sistem.signin,
+    project_id: state.sistem.project._id || "-1",
+    project: state.sistem.project,
+    user_id: state.sistem.profile._id || "-1",
+    user_name: state.sistem.profile.caption || "",
+    _view: state.sistem.folder._view || "",
+    online: state.sistem.online
+  };
+}
+
+export default connect(mapStateToProps)(ViewSettings);

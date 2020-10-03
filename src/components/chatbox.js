@@ -1,28 +1,16 @@
 import React from "react";
 import "../styles/chatbox.scss";
-import {
-  Loading,
-  userId,
-  projectId,
-  Subscribe,
-  UnSubscribe,
-  EventUnSubscribe,
-  Event,
-  getVar,
-  setVar,
-  getValue
-} from "../components/utilities";
-import { Api as Talk } from "../api/talkings";
+import { Subscribe, UnSubscribe, getValue } from "../components/utilities";
+import { Api as Talk } from "../services/talkings";
+import { Actions as Sistem } from "../services/actions/sistem";
+import { connect } from "react-redux";
 
 class Chatbox extends React.Component {
   constructor(props) {
     super(props);
-    Loading();
     this.state = {
       _id: "__Chatbox",
-      userId: userId(),
-      project_id: "-1",
-      rows: getVar("view_rows", "views", 30),
+      rows: this.props.view_rows,
       display: "broadcastList",
       talk: {},
       data: {
@@ -38,15 +26,6 @@ class Chatbox extends React.Component {
       }
     };
   }
-
-  eventSetProject = e => {
-    this.setState({
-      data: {
-        ...this.state.data,
-        project_id: e._id
-      }
-    });
-  };
 
   eventMessage = e => {
     const data = this.state.data;
@@ -79,8 +58,8 @@ class Chatbox extends React.Component {
   };
 
   handleData = e => {
-    const project_id = projectId();
-    const display = getVar(project_id, "broadcast", "broadcastList");
+    const project_id = this.props.project_id;
+    const display = Sistem.getVar(project_id, "broadcast", "broadcastList");
     if (display === "broadcast") {
     } else {
       const search = this.state.data.search;
@@ -127,32 +106,21 @@ class Chatbox extends React.Component {
   };
 
   handleShowBoradcast = e => {
-    setVar(this.state.project_id, "broadcast", "broadcast");
     this.setState({ display: "broadcast", talk: e });
   };
 
   handleShowBoradcastList = e => {
-    setVar(this.state.project_id, "broadcast", "broadcastList");
     this.setState({ display: "broadcastList" });
   };
 
   componentDidMount() {
-    Subscribe(`message/${this.state.userId}`, event => this.eventMessage(event));
-    Event("__project", this.eventSetProject);
-    //this.handleData({ scroll: false });
+    Subscribe(`message/${this.props.user_id}`, event => this.eventMessage(event));
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.data.project_id !== this.state.data.project_id) {
-      this.handleData({ scroll: false });
-    } else if (prevState.data.display !== this.state.data.display && this.state.data.display === "broadcast") {
-      this.handleData({ scroll: false });
-    }
-  }
+  componentDidUpdate(prevProps, prevState) {}
 
   componentWillUnmount() {
-    UnSubscribe(`message/${this.state.userId}`, event => this.eventMessage(event));
-    EventUnSubscribe("__project", this.eventSetProject);
+    UnSubscribe(`message/${this.props.user_id}`, event => this.eventMessage(event));
   }
 
   render() {
@@ -250,4 +218,15 @@ class Chatbox extends React.Component {
   }
 }
 
-export default Chatbox;
+function mapStateToProps(state) {
+  return {
+    signin: state.sistem.signin,
+    project_id: state.sistem.project._id || "-1",
+    user_id: state.sistem.profile._id || "-1",
+    _view: state.sistem.folder._view || "",
+    view_rows: state.sistem.view_rows,
+    online: state.sistem.online
+  };
+}
+
+export default connect(mapStateToProps)(Chatbox);

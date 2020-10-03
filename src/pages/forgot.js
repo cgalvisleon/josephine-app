@@ -1,10 +1,11 @@
 import React from "react";
 import { Link, Redirect } from "react-router-dom";
 import "../styles/signin.scss";
-import { Loading, ShowAlert, ShowDanger, setSessionVar, getValue, focus, validCellPhone } from "../components/utilities";
+import { Loading, ShowAlert, ShowDanger, focus, validCellPhone } from "../components/utilities";
 import TopBar from "../components/topbar";
 import BottomBar from "../components/bottombar";
-import { Api } from "../api/authentication";
+import { Api } from "../services/authentication";
+import { Actions as Sistem } from "../services/actions/sistem";
 import { connect } from "react-redux";
 
 class Forgot extends React.Component {
@@ -65,22 +66,9 @@ class Forgot extends React.Component {
       ShowAlert("Código requerido!");
       focus("code");
     } else {
-      Api.forgot(data.username, data.password, data.confirmation, data.code)
-        .then(result => {
-          if (result.msg === "") {
-            const data = getValue(result, "data", {});
-            const token = getValue(data, "token", "");
-            const session = getValue(data, "session", "");
-            setSessionVar("token", token);
-            setSessionVar("session", session);
-            this.setState({ signin: true });
-          } else {
-            ShowDanger(result.message);
-          }
-        })
-        .catch(err => {
-          ShowDanger("¡Error del sistema!");
-        });
+      Sistem.forgot(data.username, data.password, data.confirmation, data.code).catch(err => {
+        ShowDanger("¡Error del sistema!");
+      });
     }
   };
 
@@ -98,7 +86,7 @@ class Forgot extends React.Component {
   };
 
   render() {
-    if (this.props.signin) {
+    if (this.props.sistem.signin) {
       return <Redirect to="/inboxes" push={true} />;
     }
     return (

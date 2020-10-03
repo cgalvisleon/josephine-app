@@ -1,83 +1,29 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { toggle, Emitter, getVar, setVar, getValue, minicount } from "./utilities";
-
-function Item(props) {
-  const onToogle = () => {
-    props.folder.display = setVar(props.folder._id, "display", !props.folder.display);
-    toggle(props.dropdowId);
-  };
-
-  const setFolder = () => {
-    Emitter("__folder", props.folder);
-  };
-
-  if (!props.dropdow) {
-    return (
-      <React.Fragment>
-        <Link
-          className={getValue(props.select, "_id", "") === props.folder._id ? "item active" : "item"}
-          to={props.folder._view}
-          onClick={setFolder}
-        >
-          <div className="item-content" to={props.folder._view || ""}>
-            <div className="item-icon">
-              <i className={`${props.folder.icon || ""}`}></i>
-            </div>
-            <div className="item-label">{props.folder.caption || ""}</div>
-            <div className="item-right">{minicount(props.folder._count) || ""}</div>
-          </div>
-        </Link>
-      </React.Fragment>
-    );
-  } else {
-    return (
-      <React.Fragment>
-        <Link
-          className={getValue(props.select, "_id", "") === props.folder._id ? "item active" : "item"}
-          to={props.folder._view}
-          onClick={setFolder}
-        >
-          <div className="item-chevron" onClick={onToogle}>
-            <i className={props.folder.display ? "fa fa-chevron-down" : "fa fa-chevron-right"}></i>
-          </div>
-          <div className="item-content" to={props.folder._view || ""}>
-            <div className="item-icon">
-              <i className={`${props.folder.icon || ""}`}></i>
-            </div>
-            <div className="item-label">{props.folder.caption || ""}</div>
-            <div className="item-right">{props.folder._count || ""}</div>
-          </div>
-        </Link>
-      </React.Fragment>
-    );
-  }
-}
+import Folder from "./folder";
+import { useSelector } from "react-redux";
 
 function ItemFolder(props) {
-  props.folder.display = getVar(props.folder._id, "display", false);
+  const display = useSelector(state => {
+    const project_id = state.sistem.project._id;
+    const display = state.sistem.display || [];
+    const index = display.findIndex(element => element.project_id === project_id && element.folder_id === props.folder._id);
+    if (index === -1) {
+      return false;
+    } else {
+      return display[index].display;
+    }
+  });
   const subfolders = props.folder.subfolders || [];
+
   if (subfolders.length === 0) {
-    return (
-      <React.Fragment>
-        <Item folder={props.folder} select={props.select} dropdow={false}></Item>
-      </React.Fragment>
-    );
+    return <Folder folder={props.folder} dropdow={false} display={display} index={props.index} />;
   } else {
     return (
       <React.Fragment>
-        <Item folder={props.folder} select={props.select} dropdow={true} dropdowId={`${props.folder._id}__dopdown`} />
-        <div
-          id={`${props.folder._id}__dopdown`}
-          className="sidebar-subitems"
-          style={props.folder.display ? { display: "block" } : { display: "none" }}
-        >
+        <Folder folder={props.folder} dropdowId={`${props.folder._id}__dopdown`} index={props.index} dropdow={true} display={display} />
+        <div id={`${props.folder._id}__dopdown`} className="sidebar-subitems" style={display ? { display: "block" } : { display: "none" }}>
           {subfolders.map((folder, i) => {
-            return (
-              <React.Fragment key={i}>
-                <Item folder={folder} select={props.select} dropdow={false}></Item>
-              </React.Fragment>
-            );
+            return <Folder key={i} folder={folder} dropdow={false} display={display} />;
           })}
         </div>
       </React.Fragment>

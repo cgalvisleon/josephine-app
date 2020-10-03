@@ -1,15 +1,16 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "../styles/modal.scss";
-import { Loading, showModal, hideModal, projectId, ShowInfo, msg, genId } from "../components/utilities";
+import { showModal, hideModal, ShowInfo, msg, genId, getValue, ShowAlert } from "../components/utilities";
+import { ALERT002 } from "../components/msg";
 import ModalHeader from "../components/modalHeader";
-import { Button, Name } from "../components/inputs";
 import ModalOptions from "./modalOptions";
+import { Button, Name } from "../components/inputs";
+import { connect } from "react-redux";
 
 class ModalDemo extends React.Component {
   constructor(props) {
     super(props);
-    Loading();
     const data = this.handleScheme();
     this.state = {
       _id: "__modal",
@@ -19,7 +20,6 @@ class ModalDemo extends React.Component {
       data: data,
       change: false,
       printParams: {
-        project_id: data.project_id,
         _class: data._class,
         single: true
       }
@@ -28,7 +28,7 @@ class ModalDemo extends React.Component {
 
   handleScheme = () => {
     return {
-      project_id: projectId(),
+      project_id: this.props.project_id,
       _class: "",
       _state: "0",
       _id: genId("-1"),
@@ -49,7 +49,8 @@ class ModalDemo extends React.Component {
   };
 
   handleExecute = e => {
-    if (typeof this.props.setData === "function") {
+    const _state = this.props._state || "0";
+    if (typeof this.props.setData === "function" && _state === "0") {
       this.props.setData(e);
     }
     this.handleHide();
@@ -62,11 +63,17 @@ class ModalDemo extends React.Component {
 
   handleShow = () => {
     if (this.props.isFind) {
-      if (this.props._id !== "-1") {
+      const _id = getValue(this.props, "_id", "-1");
+      if (_id !== "-1") {
         this.setState({ show: true, change: false });
       }
-    } else {
+    } else if (this.props.isNew) {
       this.setState({ show: true, change: false });
+    } else {
+      const _id = getValue(this.props.data, "_id", "-1");
+      if (_id !== "-1") {
+        this.setState({ show: true, change: false });
+      }
     }
   };
 
@@ -80,7 +87,7 @@ class ModalDemo extends React.Component {
   handleOk = e => {
     if (this.state.change) {
       /*
-      const id = this.state.data.project_id;
+      const id = this.props.project_id;
       const params = this.state.data;
       Api.set(id, params).then(result => {
         if (result.msg === '') {
@@ -93,15 +100,19 @@ class ModalDemo extends React.Component {
   };
 
   handleState = e => {
-    if (e) {
-      /*
-      const id = this.state.data._id;
-      const project_id = this.state.data.project_id;
-      Api.state(id, project_id).then(result => {
-        if (result.msg === '') {
-          this.handleExecute(result.data);
-        }
-      });*/
+    if (this.state.change) {
+      ShowAlert(ALERT002);
+    } else {
+      if (e) {
+        /*
+        const id = this.state.data._id;
+        const project_id = this.props.project_id;
+        Api.state(id, project_id).then(result => {
+          if (result.msg === '') {
+            this.handleExecute(result.data);
+          }
+        });*/
+      }
     }
   };
 
@@ -233,4 +244,14 @@ class ModalDemo extends React.Component {
   }
 }
 
-export default ModalDemo;
+function mapStateToProps(state) {
+  return {
+    signin: state.sistem.signin,
+    project_id: state.sistem.project._id || "-1",
+    _view: state.sistem.folder._view || "",
+    view_rows: state.sistem.view_rows,
+    online: state.sistem.online
+  };
+}
+
+export default connect(mapStateToProps)(ModalDemo);

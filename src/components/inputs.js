@@ -1,23 +1,11 @@
 import React, { useState } from "react";
-import {
-  toolTip,
-  getDateDifference,
-  ShowAlert,
-  getValue,
-  section,
-  capitalize,
-  phone,
-  float,
-  number,
-  formatDHM,
-  getItem
-} from "./utilities";
+import { toolTip, getDateDifference, ShowAlert, getValue, section, capitalize, phone, float, number, formatDHM, getRow } from "./utilities";
 import ModalUpload from "../modals/modalUpload";
 import ListCitys from "../modals/listCitys";
 import ListTypes from "../modals/listTypes";
 import ListContacts from "../modals/listContacts";
 import ListUsers from "../modals/listUsers";
-import { Api as Project } from "../api/project";
+import { Api as Project } from "../services/project";
 
 function Input(props) {
   const handleChange = e => {
@@ -339,7 +327,7 @@ function Typehead(props) {
 
   const handleBlur = e => {
     if (!select && count > 0) {
-      const item = getItem(list, index);
+      const item = getRow(list, index);
       handleSelect(item);
     } else {
       setList([]);
@@ -353,7 +341,7 @@ function Typehead(props) {
     } else if (e.key === "ArrowDown") {
       setIndex(index + 1);
     } else if (e.key === "Enter") {
-      const item = getItem(list, index);
+      const item = getRow(list, index);
       handleSelect(item);
     }
   };
@@ -399,7 +387,7 @@ function Typehead(props) {
         {list.map((item, i) => {
           return (
             <li key={i} onClick={() => handleSelect(item)}>
-              <div className={getItem(list, index)[_id] === item[_id] ? "dropdown-item active" : "dropdown-item"}>{item[caption]}</div>
+              <div className={getRow(list, index)[_id] === item[_id] ? "dropdown-item active" : "dropdown-item"}>{item[caption]}</div>
             </li>
           );
         })}
@@ -408,21 +396,22 @@ function Typehead(props) {
   );
 }
 
-function SelectType(props) {
-  const [load, setLoad] = useState(true);
-  const [list, setList] = useState([]);
-  const handleSource = () => {
-    setLoad(false);
-    Project.types(props.project_id, props._class, "0", "", 1, 100, [
-      {
-        _id: "-1",
-        caption: ""
-      }
-    ]).then(result => {
-      setList(result.data.list);
-    });
-  };
-  const handleChange = e => {
+class SelectType extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      project_id: props.project_id,
+      _class: props._class,
+      className: props.className || "",
+      readOnly: props.readOnly || false,
+      name: props.name || "",
+      _state: props._state || "0",
+      list: []
+    };
+  }
+
+  handleChange = e => {
+    const list = this.state.list;
     const item = list.find(item => item._id === e.target.value);
     const result = {
       target: {
@@ -431,35 +420,53 @@ function SelectType(props) {
         caption: getValue(item, "caption")
       }
     };
-    props.onChange(result);
+    if (typeof this.props.onChange === "function") {
+      this.props.onChange(result);
+    }
   };
-  if (load) {
-    handleSource();
-  }
-  if (props.reload) {
-    handleSource();
+
+  handleData = e => {
+    const project_id = this.state.project_id;
+    const _class = this.state._class;
+    Project.types(project_id, _class, "0", "", 1, 100, [
+      {
+        _id: "-1",
+        caption: ""
+      }
+    ]).then(result => {
+      const list = result.data.list;
+      this.setState({
+        list: list
+      });
+    });
+  };
+
+  componentDidMount() {
+    this.handleData();
   }
 
-  return (
-    <React.Fragment>
-      <select
-        className={props.className}
-        readOnly={props.readOnly}
-        name={props.name}
-        value={props.value}
-        onChange={handleChange}
-        disabled={props._state !== "0"}
-      >
-        {list.map((item, i) => {
-          return (
-            <option key={i} value={item._id}>
-              {item.caption}
-            </option>
-          );
-        })}
-      </select>
-    </React.Fragment>
-  );
+  render() {
+    return (
+      <React.Fragment>
+        <select
+          className={this.state.className}
+          readOnly={this.state.readOnly}
+          name={this.state.name}
+          value={this.props.value || "-1"}
+          onChange={this.handleChange}
+          disabled={this.state._state !== "0"}
+        >
+          {this.state.list.map((item, i) => {
+            return (
+              <option key={i} value={item._id}>
+                {item.caption}
+              </option>
+            );
+          })}
+        </select>
+      </React.Fragment>
+    );
+  }
 }
 
 function Type(props) {
@@ -714,11 +721,12 @@ function Count(props) {
   }
 }
 
-function Time(props, date_int, date_end) {
-  date_int = date_int === undefined ? "date_int" : date_int;
-  date_end = date_end === undefined ? "date_end" : date_end;
-  const data = props.data;
-  return <div className="form-control sp ctr-sm t-m-c">{formatDHM(getDateDifference(data, date_int, date_end, true))}</div>;
+function Time(props) {
+  const date_int = props.date_int || "date_int";
+  const date_end = props.date_end || "date_end";
+  const data = props.data || {};
+  const time = getDateDifference(data, date_int, date_end, true);
+  return <div className="form-control sp ctr-sm t-m-c">{formatDHM(time)}</div>;
 }
 
 export {

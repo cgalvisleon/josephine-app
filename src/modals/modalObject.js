@@ -2,39 +2,17 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "../styles/modal.scss";
 import "../styles/suport.scss";
-import {
-  Loading,
-  showModal,
-  hideModal,
-  projectId,
-  ShowInfo,
-  msg,
-  getValue,
-  genId,
-  getItem,
-  getRowData,
-  clone
-} from "../components/utilities";
+import { showModal, hideModal, ShowInfo, msg, getValue, genId, getRow, getRowData, clone, ShowAlert } from "../components/utilities";
+import { ALERT002 } from "../components/msg";
 import ModalHeaderSuport from "../components/modalHeaderSuport";
 import ModalFooterSuport from "../components/modalFooterSuport";
 import Td from "../components/td";
-
-function master() {
-  return {
-    project_id: projectId(),
-    _class: "CONTACT",
-    _state: "0",
-    _id: genId("-1"),
-    caption: "",
-    description: ""
-  };
-}
+import { connect } from "react-redux";
 
 class ModalObject extends React.Component {
   constructor(props) {
     super(props);
-    Loading();
-    const data = master();
+    const data = this.handleScheme();
     this.state = {
       _id: "__modalObject",
       title: "Object",
@@ -47,6 +25,17 @@ class ModalObject extends React.Component {
       printParams: {}
     };
   }
+
+  handleScheme = e => {
+    return {
+      project_id: this.props.project_id,
+      _class: "CONTACT",
+      _state: "0",
+      _id: genId("-1"),
+      caption: "",
+      description: ""
+    };
+  };
 
   handleChange = e => {
     this.setState({
@@ -72,7 +61,8 @@ class ModalObject extends React.Component {
   };
 
   handleExecute = e => {
-    if (typeof this.props.setData === "function") {
+    const _state = this.props._state || "0";
+    if (typeof this.props.setData === "function" && _state === "0") {
       this.props.setData(e);
     }
     this.handleHide();
@@ -84,8 +74,12 @@ class ModalObject extends React.Component {
   };
 
   handleShow = () => {
-    if (this.props._state === "0") {
-      this.setState({ show: true, change: false });
+    const _state = this.props._state || "0";
+    if (_state === "0") {
+      this.setState({
+        show: true,
+        change: false
+      });
     }
   };
 
@@ -115,17 +109,21 @@ class ModalObject extends React.Component {
   };
 
   handleState = e => {
-    const _state = getValue(this.state.data, "_state");
-    if (_state !== e) {
-      /*
+    if (this.state.change) {
+      ShowAlert(ALERT002);
+    } else {
+      const _state = getValue(this.state.data, "_state");
+      if (_state !== e) {
+        /*
       const id = getValue(this.state.data, '_id');
       Api.state(id, e).then(result => {
         if (result.msg === '') {
-          const data = result.data;
-          this.setState({ old: data, data: data, change: false });
+          const data = clone(result.data);
+          this.setState({ old: result.data, data: data, change: false });
           this.handleExecute(data);
         }
       });*/
+      }
     }
   };
 
@@ -185,7 +183,7 @@ class ModalObject extends React.Component {
   };
 
   handleNew = () => {
-    const data = master(this.props.data);
+    const data = this.handleScheme();
     this.handleSetData({ data, isNew: true, change: true });
   };
 
@@ -194,7 +192,7 @@ class ModalObject extends React.Component {
     let result = [];
 
     for (let i = 0; i < e; i++) {
-      const item = getItem(items, i);
+      const item = getRow(items, i);
       result.push(
         <Td key={i} className="suport-item" cols="25px 145px 75px auto 250px">
           <div className="suport-td t-c">{i + 1}</div>
@@ -283,7 +281,7 @@ class ModalObject extends React.Component {
                     handlePrior={this.handlePrior}
                     handleNext={this.handleNext}
                   />
-                  <div className="modal-body-object">
+                  <div className="modal-body-tabs">
                     <nav>
                       <div className="nav nav-tabs" role="tablist">
                         <a
@@ -368,4 +366,12 @@ class ModalObject extends React.Component {
   }
 }
 
-export default ModalObject;
+function mapStateToProps(state) {
+  return {
+    signin: state.sistem.signin,
+    project_id: state.sistem.project._id || "-1",
+    online: state.sistem.online
+  };
+}
+
+export default connect(mapStateToProps)(ModalObject);

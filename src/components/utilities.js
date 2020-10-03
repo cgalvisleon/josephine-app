@@ -12,21 +12,22 @@ import differenceInDays from "date-fns/differenceInDays";
 import differenceInMinutes from "date-fns/differenceInMinutes";
 import esLA from "../assets/locale/es-la";
 import { MSG408 } from "./msg";
-import { Actions as Basic } from "../redux/actions/basic";
-const production = process.env.NODE_ENV === "production";
-const apiUrl = process.env.URL || "http://192.168.0.3:3000";
+import { Actions as Basic } from "../services/actions/sistem";
+import { KEY_STORAGE } from "../services/actionTypes";
+import store from "../services/store";
+const production = environment.production;
+const apiUrl = environment.url;
 const socketIo = io(apiUrl);
 
 window.addEventListener("offline", () => {
-  Emitter("__online", false);
+  Basic.online(false);
 });
 
 window.addEventListener("online", () => {
-  Emitter("__online", true);
+  Basic.online(true);
 });
 
 export const App = {
-  title: environment.title,
   copyright: environment.copyright,
   production: production,
   company: environment.company,
@@ -34,6 +35,7 @@ export const App = {
   mobile: environment.mobile,
   app: environment.app,
   version: pjson.version,
+  host: window.location.origin,
   mapbox: environment.mapbox
 };
 
@@ -67,33 +69,9 @@ export const getData = function(result, fieldName, _default) {
   return getValue(data, fieldName, _default);
 };
 
-export const getStringify = function(data, fieldName, _default) {
-  _default = _default || [];
-  let result = "";
-  if (data === undefined || data === null) {
-    result = _default;
-  } else if (data[fieldName] === undefined || data[fieldName] === null) {
-    result = _default;
-  } else {
-    result = data[fieldName];
-  }
-  return JSON.stringify(result);
-};
-
-export const getArray = function(data, fieldName) {
-  if (data === undefined || data === null) {
-    return "[]";
-  } else if (data[fieldName] === undefined || data[fieldName] === null) {
-    return "[]";
-  } else {
-    const result = data[fieldName];
-    return `'${result}'`;
-  }
-};
-
 export const getDateValue = function(data, fieldName, _default) {
   _default = _default || new Date();
-  const date = getValue(data, fieldName, _default);
+  const date = getValue(data, fieldName, "");
   try {
     if (date === "") {
       return _default;
@@ -110,16 +88,6 @@ export const getDateTime = function(data, fieldName, _default) {
   const date = getValue(data, fieldName, _default);
   try {
     return formatDate(new Date(date), "yyyy-MM-dd'T'HH:mm:ss");
-  } catch (err) {
-    return date;
-  }
-};
-
-export const getDate = function(data, fieldName, _default) {
-  _default = _default || new Date();
-  const date = getValue(data, fieldName, _default);
-  try {
-    return formatDate(new Date(date), "yyyy-MM-dd");
   } catch (err) {
     return date;
   }
@@ -210,17 +178,8 @@ export const getPayload = function(value) {
   return JSON.parse(payload);
 };
 
-export const getId = function(data) {
-  if (data === undefined || data === null) {
-    return genId("-1");
-  } else if (data["_id"] === undefined || data["_id"] === null) {
-    return genId("-1");
-  } else {
-    return data["_id"];
-  }
-};
-
 export const genId = function(id) {
+  id = id || "-1";
   if (id === "-1" || id === "new") {
     return uuidv4();
   } else {
@@ -247,17 +206,18 @@ export const genImgBase64 = function(fileName) {
   return `data:image/${ext.split(".").pop()};base64,${base64}`;
 };
 
-export const getItem = function(list, index) {
+export const getRow = function(list, index, _default) {
+  _default = _default || {};
   if (list === undefined) {
-    return {};
+    return _default;
   } else if (list[index] === undefined) {
-    return {};
+    return _default;
   } else {
     return list[index];
   }
 };
 
-export const getRow = function(list, index, fieldName, _default) {
+export const getRowValue = function(list, index, fieldName, _default) {
   if (list === undefined) {
     return _default;
   } else if (list[index] === undefined) {
@@ -273,7 +233,7 @@ export const getRow = function(list, index, fieldName, _default) {
 
 export const getRowNumber = function(list, index, fieldName, _default) {
   _default = _default === undefined ? 0 : _default;
-  const value = getRow(list, index, fieldName, _default);
+  const value = getRowValue(list, index, fieldName, _default);
   if (value === "") {
     return _default;
   } else {
@@ -283,7 +243,7 @@ export const getRowNumber = function(list, index, fieldName, _default) {
 
 export const getRowMoney = function(list, index, fieldName, _default) {
   _default = _default === undefined ? 0 : _default;
-  const value = getRow(list, index, fieldName, _default);
+  const value = getRowValue(list, index, fieldName, _default);
   if (value === "") {
     return _default;
   } else {
@@ -292,7 +252,7 @@ export const getRowMoney = function(list, index, fieldName, _default) {
 };
 
 export const getRowData = function(list, row, fieldName, _default) {
-  const item = getItem(list, row);
+  const item = getRow(list, row);
   return getData(item, fieldName, _default);
 };
 
@@ -401,7 +361,6 @@ export const formatNumber = function(value, precision) {
 };
 
 export const formatInteger = function(value) {
-  value = formatNumber(value);
   value = value.toString().split(",")[0];
   return value;
 };
@@ -439,18 +398,6 @@ export const setFocus = function(id, focused) {
   }
 };
 
-export const foldersCount = function(folders, counts, state) {
-  folders = folders || [];
-  folders.forEach(folder => {
-    if (folder._class === counts._class && counts._state === state) {
-      folder._count = counts.count;
-    } else {
-      foldersCount(folder.subfolders, counts, state);
-    }
-  });
-  return folders;
-};
-
 export const msg = function(code) {
   const data = {
     "MSG-CHANGE": "¡Tienes cambios pendiente por guardar!",
@@ -486,305 +433,29 @@ export const setValue = function(data, fieldName, value) {
 };
 
 export const removeStorage = function() {
-  const project = environment.storage;
-  localStorage.removeItem(project);
+  localStorage.removeItem(KEY_STORAGE);
 };
 
-export const getStorage = function(attr, def) {
-  const project = environment.storage;
-  const key = JSON.parse(localStorage.getItem(project));
-  if (key === null) {
-    return def;
-  } else if (key[attr] === undefined) {
-    return def;
+export const getStorage = function(attr, _default) {
+  let store = localStorage.getItem(KEY_STORAGE);
+  if (!store) {
+    return _default;
   } else {
-    return key[attr];
+    store = JSON.parse(store);
+    return getValue(store, attr, _default);
   }
 };
 
 export const setStorage = function(attr, val) {
-  const project = environment.storage;
-  let key = JSON.parse(localStorage.getItem(project));
-  if (key === null) {
-    key = {};
+  let store = localStorage.getItem(KEY_STORAGE);
+  if (!store) {
+    store = {};
+  } else {
+    store = JSON.parse(store);
   }
-  key[attr] = val;
-  localStorage.setItem(project, JSON.stringify(key));
+  store = setValue(store, attr, val);
+  localStorage.setItem(KEY_STORAGE, JSON.stringify(store));
   return val;
-};
-
-export const delStorage = function(attr) {
-  const project = environment.storage;
-  let key = JSON.parse(localStorage.getItem(project));
-  if (key !== null) {
-    if (attr === undefined) {
-      localStorage.removeItem(project);
-    } else {
-      key.splice(attr, 1);
-      localStorage.setItem(project, JSON.stringify(key));
-    }
-  }
-};
-
-export const getInbox = function(id, collection) {
-  let inbox = getStorage("inbox", {});
-  let data = getValue(inbox, collection, {});
-  if (id === "") {
-    return data;
-  } else {
-    return getItem(data, id);
-  }
-};
-
-export const setInbox = function(id, collection, value) {
-  let inbox = getStorage("inbox", {});
-  let data = getValue(inbox, collection, {});
-  if (id === "") {
-    data = value;
-  } else {
-    data[id] = value;
-  }
-  inbox[collection] = data;
-  setStorage("inbox", inbox);
-  return value;
-};
-
-export const putInbox = function(id, collection, field, value) {
-  let inbox = getStorage("inbox", {});
-  let data = getValue(inbox, collection, {});
-  if (id === "") {
-    data = setValue(data, field, value);
-  } else {
-    data[id] = setValue(data[id], field, value);
-  }
-  inbox[collection] = data;
-  setStorage("inbox", inbox);
-  return value;
-};
-
-export const patchInbox = function(id, collection, field, value, key) {
-  let inbox = getStorage("inbox", {});
-  let data = getValue(inbox, collection, {});
-  if (id === "") {
-    data = join(data, value, key);
-  } else {
-    data[id] = join(data[id], value, key);
-  }
-  inbox[collection] = data;
-  setStorage("inbox", inbox);
-  return value;
-};
-
-export const projectInbox = function(collection, value) {
-  if (collection !== "") {
-    const id = projectId();
-    return setInbox(id, collection, value);
-  } else {
-    return value;
-  }
-};
-
-export const getGlobalVar = function(key, _default) {
-  let data = getStorage("vars", {});
-  return getValue(data, key, _default);
-};
-
-export const setGlovalVar = function(key, value) {
-  let data = getStorage("vars", {});
-  data = setValue(data, key, value);
-  setStorage("vars", data);
-  return value;
-};
-
-export const getVar = function(id, key, _default) {
-  let vars = getStorage("vars", {});
-  let data = getValue(vars, id, {});
-  return getValue(data, key, _default);
-};
-
-export const setVar = function(id, key, value) {
-  let vars = getStorage("vars", {});
-  let data = getValue(vars, id, {});
-  data = setValue(data, key, value);
-  vars = setValue(vars, id, data);
-  setStorage("vars", vars);
-  return value;
-};
-
-export const getSends = function() {
-  return getStorage("send", []);
-};
-
-export const getSend = function(_id) {
-  let sends = getSends();
-  const index = sends.findIndex(element => element["_id"] === _id);
-  if (index === -1) {
-    return ShowOffLine();
-  } else {
-    return sends[index];
-  }
-};
-
-export const setSend = function(_id, item, endPoint) {
-  endPoint = endPoint || "";
-  if (endPoint !== "") {
-    item["__action"] = "set";
-    item["__endPont"] = endPoint;
-    let sends = getSends();
-    const index = sends.findIndex(element => element["_id"] === _id);
-    if (index === -1) {
-      sends.push(item);
-    } else {
-      sends[index] = item;
-    }
-    setStorage("send", sends);
-  }
-  return item;
-};
-
-export const delSend = function(_id, item) {
-  let sends = getSends();
-  const index = sends.findIndex(element => element["_id"] === _id);
-  if (index !== -1) {
-    sends.splice(index, 1);
-    setStorage("send", sends);
-  }
-  return item;
-};
-
-export const setState = function(_id, item, endPoint) {
-  endPoint = endPoint || "";
-  if (endPoint !== "") {
-    item["__action"] = "state";
-    item["__endPont"] = endPoint;
-    let sends = getSends();
-    const index = sends.findIndex(element => element["_id"] === _id);
-    if (index === -1) {
-      sends.push(item);
-    } else {
-      sends[index] = item;
-    }
-    setStorage("send", sends);
-  }
-  return item;
-};
-
-export const getSessionVar = function(key, _default) {
-  let data = getStorage("session", {});
-  return getValue(data, key, _default);
-};
-
-export const setSessionVar = function(key, value) {
-  let data = getStorage("session", {});
-  data = setValue(data, key, value);
-  setStorage("session", data);
-  return value;
-};
-
-export const getToken = function() {
-  return getSessionVar("token", "");
-};
-
-export const getSession = function() {
-  const result = getSessionVar("session", "");
-  return result;
-};
-
-export const getProfile = function() {
-  return getSessionVar("profile", {});
-};
-
-export const setProfile = function(item) {
-  return setSessionVar("profile", item);
-};
-
-export const getFolder = function() {
-  return getGlobalVar("folder", {});
-};
-
-export const setFolder = function(project_id, item) {
-  setVar(project_id, "folder", item);
-  return setGlovalVar("folder", item);
-};
-
-export const getFolders = function(project_id) {
-  return getVar(project_id, "folders", []);
-};
-
-export const setFolders = function(project_id, items) {
-  return setVar(project_id, "folders", items);
-};
-
-export const getView = function() {
-  const folder = getFolder();
-  return getValue(folder, "_view", "");
-};
-
-export const setProject = function(item) {
-  return setSessionVar("project", item);
-};
-
-export const getProject = function(_default) {
-  return getSessionVar("project", _default);
-};
-
-export const project = function() {
-  return getSessionVar("project", {});
-};
-
-export const projectId = function() {
-  const data = project();
-  return getValue(data, "_id", "-1");
-};
-
-export const masterId = function() {
-  const data = project();
-  const result = getValue(data, "_id", "-1");
-  if (result === "37860631") {
-    return "-1";
-  } else {
-    return result;
-  }
-};
-
-export const masterState = function() {
-  const data = project();
-  const result = getValue(data, "_id", "-1");
-  if (result === "37860631") {
-    return "0";
-  } else {
-    return "1";
-  }
-};
-
-export const userId = function() {
-  const profile = getProfile();
-  return getValue(profile, "_id", "-1");
-};
-
-export const userName = function() {
-  const profile = getProfile();
-  return getValue(profile, "caption", "");
-};
-
-export const cityId = function() {
-  const data = project();
-  return getValue(data, "city_id", "-1");
-};
-
-export const city = function() {
-  const data = project();
-  return getValue(data, "city", "");
-};
-
-export const setUserId = function(params) {
-  params = setValue(params, "user_id", userId());
-  return params;
-};
-
-export const setProjectId = function(params) {
-  params = setValue(params, "project_id", projectId());
-  return params;
 };
 
 export const Socket = {
@@ -798,6 +469,9 @@ export const Socket = {
   },
   unSubscribe: function(theme, callback) {
     socketIo.off(theme, callback);
+    if (!this.themes[theme]) return;
+    const i = this.themes[theme].indexOf(callback);
+    this.themes[theme].splice(i, 1);
   }
 };
 
@@ -819,7 +493,7 @@ export const EventEmitter = {
 };
 
 export const isOnLine = function() {
-  return window.navigator.onLine;
+  return navigator.onLine;
 };
 
 export const Emitter = function(event, data) {
@@ -838,34 +512,56 @@ export const Subscribe = function(theme, callback) {
   Socket.subscribe(theme, callback);
 };
 
-export const UnSubscribe = function(theme) {
-  Socket.unSubscribe(theme);
+export const UnSubscribe = function(theme, callback) {
+  Socket.unSubscribe(theme, callback);
 };
 
 export const Loading = function(tag) {
   tag = tag || "";
-  Basic.loading(tag);
+  const state = store.getState();
+  const count = Number(state.sistem.loading.count) + 1;
+  Basic.loading(tag, count);
+  if (tag === "") {
+    setTimeout(() => {
+      OutLoading("");
+    }, 500);
+  }
 };
 
 export const OutLoading = function(tag) {
-  tag = tag || "";
-  Basic.outLoading(tag);
+  const state = store.getState();
+  const count = Number(state.sistem.loading.count) - 1;
+  if (count <= 0) {
+    setTimeout(() => {
+      Basic.outLoading();
+    }, 500);
+  } else {
+    Basic.loading(tag, count);
+  }
 };
 
 export const ShowAlert = function(message) {
-  Basic.showAlert(message);
+  if (message !== "") {
+    Basic.showAlert(message);
+  }
 };
 
 export const ShowDanger = function(message) {
-  Basic.showDanger(message);
+  if (message !== "") {
+    Basic.showDanger(message);
+  }
 };
 
 export const ShowWarning = function(message) {
-  Basic.showWarning(message);
+  if (message !== "") {
+    Basic.showWarning(message);
+  }
 };
 
 export const ShowInfo = function(message) {
-  Basic.showInfo(message);
+  if (message !== "") {
+    Basic.showInfo(message);
+  }
 };
 
 export const ShowOffLine = function() {
@@ -879,6 +575,17 @@ export const focus = function(id) {
 
 export const toggle = function(id) {
   $(`#${id}`).toggle();
+};
+
+export const dropDown = function(id, down) {
+  $(`#${id}`).toggle();
+  if (down) {
+    $(`#${id}_icon`).removeClass("fa-chevron-right");
+    $(`#${id}_icon`).addClass("fa-chevron-down");
+  } else {
+    $(`#${id}_icon`).removeClass("fa-chevron-down");
+    $(`#${id}_icon`).addClass("fa-chevron-right");
+  }
 };
 
 export const style = function(id, attr, value) {
@@ -901,18 +608,16 @@ export const minicount = function(value) {
   if (value > 999999999) {
     const v = value / 1000000000;
     const i = v.toString().split(".")[0];
-    const d = (v.toString().split(".")[1] || 0).toString().substring(0, 1) || 0;
-    return `${i}.${d}B`;
+    //const d = (v.toString().split(".")[1] || 0).toString().substring(0, 1) || 0;
+    return `${i}B`;
   } else if (value > 999999) {
     const v = value / 1000000;
     const i = v.toString().split(".")[0];
-    const d = (v.toString().split(".")[1] || 0).toString().substring(0, 1) || 0;
-    return `${i}.${d}M`;
+    return `${i}M`;
   } else if (value > 999) {
     const v = value / 1000;
     const i = v.toString().split(".")[0];
-    const d = (v.toString().split(".")[1] || 0).toString().substring(0, 1) || 0;
-    return `${i}.${d}K`;
+    return `${i}K`;
   } else if (value <= 0 || !value) {
     return "";
   } else {
@@ -1013,12 +718,12 @@ export const join = function(list, add, key) {
   return result;
 };
 
-export const updateList = function(list, item) {
+export const updateList = function(data, item) {
   const filter = select => select._id === item._id;
-  const result = list;
+  const result = data;
   const index = result.list.findIndex(filter);
   if (index === -1) {
-    if (item._state === result.state || result.state === "ALL") {
+    if (item._state === result.state || !result.state || result.state === "ALL") {
       result.all = result.all + 1;
       result.end = result.end + 1;
       result.rows = result.rows + 1;
@@ -1026,8 +731,17 @@ export const updateList = function(list, item) {
       result.list.unshift(item);
     }
   } else {
-    if (item._state === result.state || result.state === "ALL") {
+    if (result.state === "ALL") {
       result.list[index] = item;
+    } else if (!item._state) {
+      result.list[index] = item;
+    } else if (item._state !== result.state) {
+      result.all = result.all - 1;
+      result.end = result.end - 1;
+      result.rows = result.rows - 1;
+      result.count = result.count - 1;
+      result.list[index] = item;
+      result.list[index].delete = true;
     } else if (result.list[index].delete) {
       result.all = result.all + 1;
       result.end = result.end + 1;
@@ -1042,6 +756,20 @@ export const updateList = function(list, item) {
       result.list[index] = item;
       result.list[index].delete = true;
     }
+  }
+  return result;
+};
+
+export const deleteList = function(data, item) {
+  const filter = select => select._id === item._id;
+  const result = data;
+  const index = result.list.findIndex(filter);
+  if (index !== -1) {
+    result.all = result.all - 1;
+    result.end = result.end - 1;
+    result.rows = result.rows - 1;
+    result.count = result.count - 1;
+    result.list.splice(index, 1);
   }
   return result;
 };

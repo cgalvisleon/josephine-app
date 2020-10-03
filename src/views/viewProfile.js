@@ -1,9 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "../styles/view.scss";
-import { Loading, getView, Emitter, getValue, updateList, setFocus } from "../components/utilities";
+import { Loading, getValue, updateList, setFocus } from "../components/utilities";
 import { Phone, Section, City, SelectType, Input, Avatar, Button } from "../components/inputs";
-import { Api } from "../api/profile";
+import ModalOptions from "../modals/modalOptions";
+import { Api as Profile } from "../services/profile";
+import { Actions as Sistem } from "../services/actions/sistem";
+import { connect } from "react-redux";
 
 class ViewProfile extends React.Component {
   constructor(props) {
@@ -11,7 +14,6 @@ class ViewProfile extends React.Component {
     Loading();
     this.state = {
       _id: "__ViewProfile",
-      _view: getView(),
       data: {
         _id: "",
         _state: "0",
@@ -72,6 +74,33 @@ class ViewProfile extends React.Component {
     });
   };
 
+  handleChangeChkProfile = e => {
+    const ok = e.ok;
+    if (ok) {
+      const item = e.item;
+      const index = e.index;
+      const data = this.state.data;
+      const id = data._id;
+      const project_id = item._id;
+      const profile_tp = item.profile_tp;
+      const projects = this.state.data.projects;
+      Profile.chkProfile(id, project_id, profile_tp, false).then(result => {
+        const data = result.data;
+        const res = getValue(data, "res", 0);
+        if (res === -1) {
+          projects.splice(index, 1);
+        }
+        this.setState({
+          data: {
+            ...this.state.data,
+            projects: projects
+          }
+        });
+      });
+      Sistem.setProfile();
+    }
+  };
+
   handleTogglePassword = () => {
     this.setState({ passwordHidden: !this.state.passwordHidden });
   };
@@ -99,16 +128,19 @@ class ViewProfile extends React.Component {
 
   handleSetData = () => {
     if (this.state.change) {
-      Api.setProfile(this.state.data).then(result => {
-        this.setState({ data: result.data, change: false });
-        Emitter("__profile", {});
+      Profile.setProfile(this.state.data).then(result => {
+        this.setState({
+          data: result.data,
+          change: false
+        });
+        Sistem.setProfile();
       });
     }
   };
 
   handleSetPassword = () => {
     if (this.state.change) {
-      Api.setPassword(this.state.password).then(result => {
+      Profile.setPassword(this.state.password).then(result => {
         if (result.msg === "") {
           this.setState({ password: { password: "", confirmation: "" } });
         }
@@ -122,13 +154,12 @@ class ViewProfile extends React.Component {
   };
 
   handleData = e => {
-    Api.profile().then(result => {
-      const msg = getValue(result, "msg", "");
-      if (msg !== "") {
-        this.handleExit();
+    Profile.profile().then(result => {
+      if (result.msg !== "") {
+        Sistem.signout();
       } else {
-        const data = getValue(result, "data", {});
-        this.setState({ data: data.profile, old: data.profile });
+        const data = result.data;
+        this.setState({ data: data, old: data });
         setFocus(`${this.state._id}_caption`);
       }
     });
@@ -137,10 +168,6 @@ class ViewProfile extends React.Component {
   componentDidMount() {
     this.handleData();
   }
-
-  componentDidUpdate(prevProps, prevState) {}
-
-  componentWillUnmount() {}
 
   render() {
     return (
@@ -151,7 +178,7 @@ class ViewProfile extends React.Component {
               <div className="view-object">
                 <div className="view-detail">
                   <div className="view-detail-title">
-                    <Link className="btn btn-link btn-sm float-left" to={this.state._view} onClick={this.handleGoBack}>
+                    <Link className="btn btn-link btn-sm float-left" to={this.props._view} onClick={this.handleGoBack}>
                       <i className="fas fa-arrow-left"></i>
                     </Link>
                     <div className="text">{this.state.data.caption}</div>
@@ -322,7 +349,7 @@ class ViewProfile extends React.Component {
                                 <div className="tab-item-logo">
                                   <img className="avatar" src={item.avatar || "/logo.svg"} alt="" />
                                 </div>
-                                <div className="tab-item-detail">
+                                <div className="tab-item-detail pb-0 mb-0">
                                   <div className="name">{item.caption}</div>
                                   <div className="label">{item.profile}</div>
                                   <div className="label">
@@ -336,6 +363,19 @@ class ViewProfile extends React.Component {
                                   <div className="label">
                                     <i className="fas fa-phone-alt mr-2" />
                                     {item.phone}
+                                  </div>
+                                  <div className="edit">
+                                    <ModalOptions
+                                      className="btn btn-primary btn-sm"
+                                      params={{
+                                        title: `¿Terminar vinculación?`,
+                                        description: `¿Desea terminar vinculación con el proyecto ${item.caption}?`
+                                      }}
+                                      change={true}
+                                      onClose={ok => this.handleChangeChkProfile({ item, index: i, ok })}
+                                    >
+                                      Terminar
+                                    </ModalOptions>
                                   </div>
                                 </div>
                               </div>
@@ -410,4 +450,11 @@ class ViewProfile extends React.Component {
   }
 }
 
-export default ViewProfile;
+function mapStateToProps(state) {
+  return {
+    signin: state.sistem.signin,
+    _view: state.sistem.folder._view || ""
+  };
+}
+
+export default connect(mapStateToProps)(ViewProfile);

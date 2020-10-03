@@ -1,16 +1,16 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "../styles/modal.scss";
-import { Loading, showModal, hideModal, projectId, ShowInfo, msg, setFocus, genId } from "../components/utilities";
+import { showModal, hideModal, ShowInfo, msg, setFocus, genId, getValue } from "../components/utilities";
 import { Input, Name, Section, Phone, City, Select, Avatar } from "../components/inputs";
 import ModalHeader from "../components/modalHeader";
 import ModalFooter from "../components/modalFooter";
-import { Api as Project } from "../api/project";
+import { Api as Project } from "../services/project";
+import { connect } from "react-redux";
 
 class ModalContact extends React.Component {
   constructor(props) {
     super(props);
-    Loading();
     const data = this.handleScheme();
     this.state = {
       _id: "__modalContact",
@@ -37,7 +37,7 @@ class ModalContact extends React.Component {
 
   handleScheme = e => {
     return {
-      project_id: projectId(),
+      project_id: this.props.project_id,
       _class: "CONTACT",
       _state: "0",
       _id: genId("-1"),
@@ -104,11 +104,17 @@ class ModalContact extends React.Component {
 
   handleShow = () => {
     if (this.props.isFind) {
-      if (this.props._id !== "-1") {
+      const _id = getValue(this.props, "_id", "-1");
+      if (_id !== "-1") {
         this.setState({ show: true, change: false });
       }
-    } else {
+    } else if (this.props.isNew) {
       this.setState({ show: true, change: false });
+    } else {
+      const _id = getValue(this.props.data, "_id", "-1");
+      if (_id !== "-1") {
+        this.setState({ show: true, change: false });
+      }
     }
   };
 
@@ -165,9 +171,7 @@ class ModalContact extends React.Component {
       change: e.change
     });
     showModal(this.state._id);
-    if (e.focusInt) {
-      setFocus(`${this.state._id}_caption`);
-    }
+    setFocus(`${this.state._id}_caption`, e.focusInt);
   };
 
   handleData = focusInt => {
@@ -384,4 +388,12 @@ class ModalContact extends React.Component {
   }
 }
 
-export default ModalContact;
+function mapStateToProps(state) {
+  return {
+    signin: state.sistem.signin,
+    project_id: state.sistem.project._id || "-1",
+    online: state.sistem.online
+  };
+}
+
+export default connect(mapStateToProps)(ModalContact);

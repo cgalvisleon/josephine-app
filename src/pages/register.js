@@ -1,11 +1,12 @@
 import React from "react";
 import { Link, Redirect } from "react-router-dom";
 import "../styles/signin.scss";
-import { Loading, ShowAlert, ShowDanger, setSessionVar, getValue, focus, validCellPhone, validEmail } from "../components/utilities";
+import { Loading, ShowAlert, ShowDanger, focus, validCellPhone, validEmail } from "../components/utilities";
 import TopBar from "../components/topbar";
 import BottomBar from "../components/bottombar";
-import { Api } from "../api/authentication";
+import { Api } from "../services/authentication";
 import { City, SelectType } from "../components/inputs";
+import { Actions as Sistem } from "../services/actions/sistem";
 import { connect } from "react-redux";
 
 class Register extends React.Component {
@@ -108,22 +109,18 @@ class Register extends React.Component {
       ShowAlert("Código requerido!");
       focus("code");
     } else {
-      Api.signup(data.username, data.password, data.confirmation, data.caption, data.project, data.module_id, data.city_id, data.code)
-        .then(result => {
-          if (result.msg === "") {
-            const data = getValue(result, "data", {});
-            const token = getValue(data, "token", "");
-            const session = getValue(data, "session", "");
-            setSessionVar("token", token);
-            setSessionVar("session", session);
-            this.setState({ signin: true });
-          } else {
-            ShowDanger(result.message);
-          }
-        })
-        .catch(err => {
-          ShowDanger("¡Error del sistema!");
-        });
+      Sistem.signup(
+        data.username,
+        data.password,
+        data.confirmation,
+        data.caption,
+        data.project,
+        data.module_id,
+        data.city_id,
+        data.code
+      ).catch(err => {
+        ShowDanger("¡Error del sistema!");
+      });
     }
   };
 
@@ -152,7 +149,7 @@ class Register extends React.Component {
   }
 
   render() {
-    if (this.props.signin) {
+    if (this.props.sistem.signin) {
       return <Redirect to="/inboxes" push={true} />;
     }
     return (

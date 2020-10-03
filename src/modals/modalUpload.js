@@ -1,15 +1,15 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "../styles/modal.scss";
-import { Loading, showModal, hideModal, fileUpload, userId, OutLoading, ShowAlert, getValue } from "../components/utilities";
+import { showModal, hideModal, fileUpload, Loading, OutLoading, ShowAlert, getValue } from "../components/utilities";
 import ModalHeader from "../components/modalHeader";
-import { Api as System } from "../api/system";
+import { Api as System } from "../services/system";
 import ModalOptions from "./modalOptions";
+import { connect } from "react-redux";
 
 class ModalUpload extends React.Component {
   constructor(props) {
     super(props);
-    Loading();
     const name = "ModalUpload";
     this.state = {
       _id: "__ModalUpload",
@@ -35,7 +35,7 @@ class ModalUpload extends React.Component {
 
   handleChangeFile = e => {
     if (e.target.files.length > 0) {
-      Loading();
+      Loading("upload");
       const file = e.target.files[0];
       const name = file.name;
       const ext = name.split(".")[1];
@@ -43,7 +43,7 @@ class ModalUpload extends React.Component {
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = () => {
-        OutLoading();
+        OutLoading("upload");
         this.setState({
           data: {
             ...this.state.data,
@@ -71,8 +71,12 @@ class ModalUpload extends React.Component {
 
   handleShow = e => {
     if (window.FileReader) {
-      if (this.props._state === "0") {
-        this.setState({ show: true, change: false });
+      const _state = this.props._state || "0";
+      if (_state === "0") {
+        this.setState({
+          show: true,
+          change: false
+        });
       }
     } else {
       ShowAlert("¡Funcionalidad no soportada por el navegador!");
@@ -95,7 +99,7 @@ class ModalUpload extends React.Component {
     const ext = getValue(this.state.data, "ext", "");
     const size = getValue(this.state.data, "size", 0);
     const base64 = getValue(this.state.data, "file", "");
-    const user_id = userId();
+    const user_id = this.props.user_id;
     System.attachmentsBase64(
       project_id,
       "-1",
@@ -227,4 +231,14 @@ class ModalUpload extends React.Component {
   }
 }
 
-export default ModalUpload;
+function mapStateToProps(state) {
+  return {
+    signin: state.sistem.signin,
+    project_id: state.sistem.project._id || "-1",
+    user_id: state.sistem.profile._id || "-1",
+    _view: state.sistem.folder._view || "",
+    online: state.sistem.online
+  };
+}
+
+export default connect(mapStateToProps)(ModalUpload);

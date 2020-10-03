@@ -1,42 +1,27 @@
 import React from "react";
 import "../styles/view.scss";
 import { Redirect } from "react-router-dom";
-import {
-  Loading,
-  getFolder,
-  projectId,
-  Event,
-  EventUnSubscribe,
-  Subscribe,
-  UnSubscribe,
-  setVar,
-  getVar,
-  isOnLine,
-  updateList
-} from "../components/utilities";
+import { Loading, Subscribe, UnSubscribe, updateList } from "../components/utilities";
 import ViewTop from "../components/viewTop";
 import ViewList from "../components/viewList";
 import getModal from "../components/modals";
-import { Api as Project } from "../api/project";
+import { Api as Project } from "../services/project";
+import { Actions as Sistem } from "../services/actions/sistem";
+import { connect } from "react-redux";
 
 class ViewSuports extends React.Component {
   constructor(props) {
     super(props);
     Loading();
-    const project_id = projectId();
-    const folder = getFolder();
     this.state = {
       _id: "__ViewSuports",
       title: "Reportes",
-      project_id: project_id,
-      _class: folder._class,
-      _view: folder._view,
-      rows: getVar("view_rows", "views", 30),
+      rows: this.props.view_rows,
       field: "",
       data: {
         list: [],
-        project_id: project_id,
-        state: getVar(project_id, `${folder._class}_state`, "ALL"),
+        project_id: "-1",
+        state: Sistem.getVar(this.props.project_id, `${this.props._class}_state`, "ALL"),
         search: "",
         int: 0,
         end: 0,
@@ -46,43 +31,21 @@ class ViewSuports extends React.Component {
         all: 0
       },
       printParams: {
-        project_id: project_id,
-        _class: folder._class,
+        _class: this.props._class,
         single: false
       },
-      select: { _id: "-1" }
+      select: { _id: "-1", caption: "" }
     };
   }
-
-  eventSetView = e => {
-    const project_id = projectId();
-    if (this.state._view !== e) {
-      this.setState({ _view: e, project_id: project_id });
-    } else if (this.state.project_id !== project_id) {
-      this.setState({ project_id: project_id });
-    }
-  };
-
-  eventSetFolder = e => {
-    if (this.state._class !== e._class && this.state._view === e._view) {
-      this.setState({
-        _class: e._class,
-        printParams: {
-          ...this.state.printParams,
-          _class: e._class
-        }
-      });
-    }
-  };
 
   eventSetData = e => {
     setTimeout(() => {
       this.handleUpdate(e);
-    }, 1000);
+    }, 500);
   };
 
   handleSetData = e => {
-    if (!isOnLine) {
+    if (!this.props.online) {
       this.handleUpdate(e);
     }
   };
@@ -101,8 +64,8 @@ class ViewSuports extends React.Component {
   };
 
   handleData = scroll => {
-    const project_id = this.state.project_id;
-    const _class = this.state._class;
+    const project_id = this.props.project_id;
+    const _class = this.props._class;
     const state = this.state.data.state;
     const search = this.state.data.search;
     const rows = this.state.rows;
@@ -122,7 +85,7 @@ class ViewSuports extends React.Component {
         }
       });
     } else {
-      Project.documents(project_id, _class, state, search, 1, rows).then(result => {
+      Project.documents(project_id, _class, state, search, 1, rows, []).then(result => {
         if (result.msg === "") {
           const data = result.data;
           this.setState({
@@ -142,14 +105,8 @@ class ViewSuports extends React.Component {
     this.handleData(false);
   };
 
-  handleKeyDown = e => {
-    if (e.key === "Enter") {
-      this.handleSearch();
-    }
-  };
-
   handleState = e => {
-    const state = setVar(this.state.project_id, `${this.state._class}_state`, e);
+    const state = Sistem.setVar(this.props.project_id, `${this.props._class}_state`, e);
     this.setState({
       data: {
         ...this.state.data,
@@ -171,76 +128,72 @@ class ViewSuports extends React.Component {
 
   handleUpdate = e => {
     const result = updateList(this.state.data, e);
-    this.setState({ data: result });
+    this.setState({
+      data: result
+    });
   };
 
   componentDidMount() {
-    Subscribe(`${this.state._class}/${this.state.project_id}`, event => this.eventSetData(event));
-    Event("__viewInit", this.eventSetView);
-    Event("__folder", this.eventSetFolder);
+    Subscribe(`${this.props._class}/${this.props.project_id}`, event => this.eventSetData(event));
     this.handleData(false);
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (
-      (prevState._view === this.state._view && prevState.project_id !== this.state.project_id) ||
-      prevState._class !== this.state._class
-    ) {
-      UnSubscribe(`${prevState._class}/${prevState.project_id}`, event => this.eventSetData(event));
-      Subscribe(`${this.state._class}/${this.state.project_id}`, event => this.eventSetData(event));
-      this.handleData(false);
+    if (prevProps._view === this.props._view && this.props.project_id !== "-1") {
+      if (prevProps.project_id !== this.props.project_id || prevProps._class !== this.props._class) {
+        UnSubscribe(`${prevProps._class}/${prevProps.project_id}`, event => this.eventSetData(event));
+        Subscribe(`${this.props._class}/${this.props.project_id}`, event => this.eventSetData(event));
+        this.handleData(false);
+      }
     } else if (prevState.data.state !== this.state.data.state) {
       this.handleData(false);
     }
   }
 
   componentWillUnmount() {
-    UnSubscribe(`${this.state._class}/${this.state.project_id}`, event => this.eventSetData(event));
-    EventUnSubscribe("__viewInit", this.eventSetView);
-    EventUnSubscribe("__folder", this.eventSetFolder);
+    UnSubscribe(`${this.props._class}/${this.props.project_id}`, event => this.eventSetData(event));
   }
 
   render() {
-    if (this.state._view !== this.props.location.pathname) {
-      return <Redirect to={this.state._view} push={true} />;
+    if (this.props._view !== this.props.location.pathname) {
+      return <Redirect to={this.props._view} push={true} />;
     }
-    let modal = getModal(this.state._class);
+    let modal = getModal(this.props._class);
 
     return (
       <React.Fragment>
         <div className={this.state._id}>
           <div className="viewcontainerList">
             <ViewTop
-              project_id={this.state.project_id}
+              project_id={this.props.project_id}
+              data={this.state.data}
+              printParams={this.state.printParams}
               views={[
                 { _id: "ALL", caption: "Todos" },
                 { _id: "0", caption: "Activos" },
                 { _id: "1", caption: "Terminados" },
                 { _id: "2", caption: "Cancelados" }
               ]}
-              data={this.state.data}
-              printParams={this.state.printParams}
               fields={[
                 { _id: "code", caption: "Código", field: '"code":"00000001"' },
                 { _id: "", caption: "Todos", field: "" }
               ]}
               field={this.state.field}
               Modal={modal}
-              handleChange={this.handleChange}
-              handleState={this.handleState}
-              handleField={this.handleField}
-              handleKeyDown={this.handleKeyDown}
-              handleSearch={this.handleSearch}
+              onChange={this.handleChange}
+              onState={this.handleState}
+              onField={this.handleField}
+              onSearch={this.handleSearch}
               setData={this.handleSetData}
             />
             <ViewList
-              project_id={this.state.project_id}
+              project_id={this.props.project_id}
               _state={this.state.data.state}
               data={this.state.data}
               select={this.state.select}
               Modal={modal}
-              handleData={this.handleData}
-              handleSelected={this.handleSelected}
+              onData={this.handleData}
+              onSelected={this.handleSelected}
               setData={this.handleSetData}
             />
           </div>
@@ -250,4 +203,16 @@ class ViewSuports extends React.Component {
   }
 }
 
-export default ViewSuports;
+function mapStateToProps(state) {
+  return {
+    signin: state.sistem.signin,
+    project_id: state.sistem.project._id || "-1",
+    forlder: state.sistem.folder,
+    _class: state.sistem.folder._class,
+    _view: state.sistem.folder._view || "",
+    view_rows: state.sistem.view_rows,
+    online: state.sistem.online
+  };
+}
+
+export default connect(mapStateToProps)(ViewSuports);

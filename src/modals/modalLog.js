@@ -1,15 +1,14 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "../styles/modal.scss";
-import { Loading, showModal, hideModal, formatDateTime, genId } from "../components/utilities";
+import { showModal, hideModal, formatDateTime, genId } from "../components/utilities";
 import ModalHeader from "../components/modalHeader";
 import { Button, Input, Textarea } from "../components/inputs";
-import { Api as Log } from "../api/log";
+import { Api as Log } from "../services/log";
 
 class ModalLog extends React.Component {
   constructor(props) {
     super(props);
-    Loading();
     const data = this.handleScheme();
     this.state = {
       _id: "__modalLog",
@@ -43,7 +42,8 @@ class ModalLog extends React.Component {
   };
 
   handleExecute = e => {
-    if (typeof this.props.setData === "function") {
+    const _state = this.props._state || "0";
+    if (typeof this.props.setData === "function" && _state === "0") {
       this.props.setData(e);
     }
     this.handleHide();

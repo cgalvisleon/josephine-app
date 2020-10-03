@@ -1,10 +1,8 @@
 import React from "react";
 import "../styles/view.scss";
 import { Redirect } from "react-router-dom";
-import { Loading, getView, Event, EventUnSubscribe } from "../components/utilities";
+import { Loading } from "../components/utilities";
 import ReactMarkdown from "react-markdown";
-/** Vistas */
-/** Modales */
 import ModalOptions from "../modals/modalOptions";
 import ModalDemo from "../modals/modal";
 import ModalList from "../modals/modalList";
@@ -12,35 +10,21 @@ import ModalSingleList from "../modals/modalSingleList";
 import ModalPrint from "../modals/modalPrint";
 import ModalUpload from "../modals/modalUpload";
 import ModalObject from "../modals/modalObject";
+import { connect } from "react-redux";
 
 class ViewDevToolBox extends React.Component {
   constructor(props) {
     super(props);
     Loading();
-    this.state = {
-      _view: getView()
-    };
   }
-
-  eventSetView = e => {
-    this.setState({ _view: e });
-  };
 
   handleExecute = e => {
     console.log("handleExecute");
   };
 
-  componentDidMount() {
-    Event("__viewInit", this.eventSetView);
-  }
-
-  componentWillUnmount() {
-    EventUnSubscribe("__viewInit", this.eventSetView);
-  }
-
   render() {
-    if (this.state._view !== this.props.location.pathname) {
-      return <Redirect to={this.state._view} push={true} />;
+    if (this.props._view !== this.props.location.pathname) {
+      return <Redirect to={this.props._view} push={true} />;
     }
     const name = "Modal";
     return (
@@ -246,4 +230,11 @@ class ViewDevToolBox extends React.Component {
   }
 }
 
-export default ViewDevToolBox;
+function mapStateToProps(state) {
+  return {
+    signin: state.sistem.signin,
+    _view: state.sistem.folder._view || ""
+  };
+}
+
+export default connect(mapStateToProps)(ViewDevToolBox);

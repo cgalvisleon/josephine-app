@@ -1,18 +1,18 @@
 import React from "react";
+import { useSelector } from "react-redux";
 
 function Alert(props) {
-  let show = props.alert.show;
+  const alert = useSelector(state => {
+    return state.sistem.alert;
+  });
 
-  if (show) {
+  if (alert.show) {
     let theme = "alert alert-primary";
-    const type = props.alert.type;
-    const message = props.alert.message;
-
-    if (type === "danger") {
+    if (alert.type === "danger") {
       theme = "alert alert-danger";
-    } else if (type === "warning") {
+    } else if (alert.type === "warning") {
       theme = "alert alert-warning";
-    } else if (type === "info") {
+    } else if (alert.type === "info") {
       theme = "alert alert-info";
     }
 
@@ -20,7 +20,7 @@ function Alert(props) {
       <React.Fragment>
         <div className="__alert">
           <div className={theme} role="alert">
-            {message}
+            {alert.message}
           </div>
         </div>
       </React.Fragment>

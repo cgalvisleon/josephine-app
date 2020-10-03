@@ -1,36 +1,24 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "../styles/modal.scss";
-import {
-  Loading,
-  showModal,
-  hideModal,
-  Subscribe,
-  UnSubscribe,
-  isOnLine,
-  getValue,
-  emptyValue,
-  updateList,
-  getVar
-} from "../components/utilities";
+import { showModal, hideModal, Subscribe, UnSubscribe, isOnLine, getValue, emptyValue, updateList } from "../components/utilities";
 import ModalHeaderList from "../components/modalHeaderList";
 import ModalSearch from "../components/modalSearch";
 import ModalList from "../components/modalList";
 import ModalSelect from "../components/modalSelect";
 import ModalUser from "./modalUser";
 import ModalFooterList from "../components/modalFooterList";
-import { Api as Project } from "../api/project";
+import { Api as Project } from "../services/project";
 
 class ListUsers extends React.Component {
   constructor(props) {
     super(props);
-    Loading();
     this.state = {
       _id: "__listUsers",
       title: "Usuarios",
       name: "users",
       show: false,
-      rows: getVar("view_rows", "views", 30),
+      rows: 30,
       data: {
         list: [],
         state: getValue(props, "state", "0"),
@@ -50,7 +38,7 @@ class ListUsers extends React.Component {
   eventSetData = e => {
     setTimeout(() => {
       this.handleUpdate(e);
-    }, 1000);
+    }, 500);
   };
 
   handleSetData = e => {
@@ -70,7 +58,8 @@ class ListUsers extends React.Component {
   };
 
   handleExecute = e => {
-    if (typeof this.props.setData === "function") {
+    const _state = this.props._state || "0";
+    if (typeof this.props.setData === "function" && _state === "0") {
       this.props.setData(e);
     }
     this.handleHide();
@@ -82,7 +71,8 @@ class ListUsers extends React.Component {
   };
 
   handleShow = () => {
-    if (this.props._state === "0") {
+    const _state = this.props._state || "0";
+    if (_state === "0") {
       this.setState({
         data: {
           ...this.state.data,

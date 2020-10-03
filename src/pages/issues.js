@@ -4,7 +4,7 @@ import "../styles/signin.scss";
 import { Loading, ShowAlert, ShowDanger, focus } from "../components/utilities";
 import TopBar from "../components/topbar";
 import BottomBar from "../components/bottombar";
-import { Api } from "../api/authentication";
+import { Api } from "../services/authentication";
 
 class Issues extends React.Component {
   constructor(props) {

@@ -1,21 +1,18 @@
 import React from "react";
 import { Link, Redirect } from "react-router-dom";
 import "../styles/signin.scss";
-import { Loading, ShowAlert, setSessionVar, ShowDanger, getValue, focus } from "../components/utilities";
+import { Loading, ShowAlert, ShowDanger, focus } from "../components/utilities";
 import TopBar from "../components/topbar";
 import BottomBar from "../components/bottombar";
-import { Api as Authentication } from "../api/authentication";
+import { Actions as Sistem } from "../services/actions/sistem";
 import { connect } from "react-redux";
 
 class Signin extends React.Component {
   constructor(props) {
     super(props);
     Loading();
-    const _id = this.props.location.pathname;
     this.state = {
-      _id: _id,
       passwordHidden: true,
-      signin: false,
       data: {
         username: "",
         password: ""
@@ -52,22 +49,9 @@ class Signin extends React.Component {
       ShowAlert("¡Contraseña requerida!");
       focus("password");
     } else {
-      Authentication.signIn(this.state.data.username, this.state.data.password)
-        .then(result => {
-          if (result.msg === "") {
-            const data = getValue(result, "data", {});
-            const token = getValue(data, "token", "");
-            const session = getValue(data, "session", "");
-            setSessionVar("token", token);
-            setSessionVar("session", session);
-            this.setState({ signin: true });
-          } else {
-            ShowDanger(result.message);
-          }
-        })
-        .catch(() => {
-          ShowDanger("¡Error del sistema!");
-        });
+      Sistem.signin(this.state.data.username, this.state.data.password).catch(() => {
+        ShowDanger("¡Error del sistema!");
+      });
     }
   };
 
@@ -85,7 +69,7 @@ class Signin extends React.Component {
   }
 
   render() {
-    if (this.props.signin) {
+    if (this.props.sistem.signin) {
       return <Redirect to="/inboxes" push={true} />;
     }
     return (

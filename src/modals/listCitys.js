@@ -1,24 +1,23 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "../styles/modal.scss";
-import { Loading, showModal, hideModal, emptyValue, getValue, getRow, getVar } from "../components/utilities";
+import { showModal, hideModal, emptyValue, getValue, getRowValue } from "../components/utilities";
 import ModalHeaderList from "../components/modalHeaderList";
 import ModalSearch from "../components/modalSearch";
 import ModalList from "../components/modalList";
 import ModalFooterList from "../components/modalFooterList";
-import { Api as Project } from "../api/project";
+import { Api as Project } from "../services/project";
 
 class ListCitys extends React.Component {
   constructor(props) {
     super(props);
-    Loading();
     const name = "ListCitys";
     this.state = {
       _id: "__listCitys",
       title: "Ciudades",
       name: name,
       show: false,
-      rows: getVar("view_rows", "views", 30),
+      rows: 30,
       mains: [],
       main_id: "-1",
       data: {
@@ -53,7 +52,8 @@ class ListCitys extends React.Component {
   };
 
   handleExecute = e => {
-    if (typeof this.props.setData === "function") {
+    const _state = this.props._state || "0";
+    if (typeof this.props.setData === "function" && _state === "0") {
       this.props.setData(e);
     }
     this.handleHide();
@@ -65,7 +65,8 @@ class ListCitys extends React.Component {
   };
 
   handleShow = () => {
-    if (this.props._state === "0") {
+    const _state = this.props._state || "0";
+    if (_state === "0") {
       this.setState({
         data: {
           ...this.state.data,
@@ -148,7 +149,7 @@ class ListCitys extends React.Component {
         const data = result.data;
         const mains = data.list;
         if (main_id === "-1") {
-          main_id = getRow(mains, 0, "_id", "-1");
+          main_id = getRowValue(mains, 0, "_id", "-1");
         }
         this.setState({
           mains: mains,

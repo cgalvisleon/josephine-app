@@ -1,21 +1,11 @@
 import React from "react";
 import "../styles/view.scss";
 import { Redirect } from "react-router-dom";
-import {
-  Loading,
-  getView,
-  Subscribe,
-  UnSubscribe,
-  formatDateTime,
-  Event,
-  EventUnSubscribe,
-  formatInteger,
-  updateList,
-  getVar
-} from "../components/utilities";
+import { Loading, Subscribe, UnSubscribe, formatDateTime, formatInteger, updateList } from "../components/utilities";
 import ModalLog from "../modals/modalLog";
 import Row from "../components/row";
-import { Api as Logs } from "../api/log";
+import { Api as Logs } from "../services/log";
+import { connect } from "react-redux";
 
 class ViewLogs extends React.Component {
   constructor(props) {
@@ -23,8 +13,8 @@ class ViewLogs extends React.Component {
     Loading();
     this.state = {
       _id: "__ViewLogs",
-      _view: getView(),
-      rows: getVar("view_rows", "views", 30),
+      _view: {},
+      rows: this.props.view_rows,
       data: {
         int: 0,
         end: 0,
@@ -46,7 +36,7 @@ class ViewLogs extends React.Component {
   eventSetData = e => {
     setTimeout(() => {
       this.handleUpdate(e);
-    }, 1000);
+    }, 500);
   };
 
   handleChange = e => {
@@ -104,13 +94,14 @@ class ViewLogs extends React.Component {
 
   componentDidMount() {
     Subscribe("logs", event => this.eventSetData(event));
-    Event("__viewInit", this.eventSetView);
     this.handleData({ scroll: false });
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.data.project_id !== this.state.data.project_id) {
-      this.handleData({ scroll: false });
+    if (prevProps._view === this.props._view && this.props.project_id !== "-1") {
+      if (prevState.data.project_id !== this.props.project_id) {
+        this.handleData({ scroll: false });
+      }
     } else if (prevState.data.state !== this.state.data.state) {
       this.handleData({ scroll: false });
     }
@@ -118,12 +109,11 @@ class ViewLogs extends React.Component {
 
   componentWillUnmount() {
     UnSubscribe(`logs`, event => this.eventSetData(event));
-    EventUnSubscribe("__viewInit", this.eventSetView);
   }
 
   render() {
-    if (this.state._view !== this.props.location.pathname) {
-      return <Redirect to={this.state._view} push={true} />;
+    if (this.props._view !== this.props.location.pathname) {
+      return <Redirect to={this.props._view} push={true} />;
     }
     return (
       <React.Fragment>
@@ -186,4 +176,13 @@ class ViewLogs extends React.Component {
   }
 }
 
-export default ViewLogs;
+function mapStateToProps(state) {
+  return {
+    signin: state.sistem.signin,
+    project_id: state.sistem.project._id || "-1",
+    _view: state.sistem.folder._view || "",
+    view_rows: state.sistem.view_rows
+  };
+}
+
+export default connect(mapStateToProps)(ViewLogs);

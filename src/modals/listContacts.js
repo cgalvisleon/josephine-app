@@ -1,36 +1,24 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "../styles/modal.scss";
-import {
-  Loading,
-  showModal,
-  hideModal,
-  Subscribe,
-  UnSubscribe,
-  isOnLine,
-  getValue,
-  emptyValue,
-  updateList,
-  getVar
-} from "../components/utilities";
+import { showModal, hideModal, Subscribe, UnSubscribe, isOnLine, getValue, emptyValue, updateList } from "../components/utilities";
 import ModalHeaderList from "../components/modalHeaderList";
 import ModalSearchMenu from "../components/modalSearchMenu";
 import ModalList from "../components/modalList";
 import ModalSelect from "../components/modalSelect";
 import ModalFooterList from "../components/modalFooterList";
 import ModalContact from "./modalContact";
-import { Api as Project } from "../api/project";
+import { Api as Project } from "../services/project";
 
 class ListContacts extends React.Component {
   constructor(props) {
     super(props);
-    Loading();
     this.state = {
       _id: "__listContacts",
       title: "Contactos",
       name: "contacts",
       show: false,
-      rows: getVar("view_rows", "views", 30),
+      rows: 30,
       data: {
         list: [],
         state: "0",
@@ -50,7 +38,7 @@ class ListContacts extends React.Component {
   eventSetData = e => {
     setTimeout(() => {
       this.handleUpdate(e);
-    }, 1000);
+    }, 500);
   };
 
   handleSetData = e => {
@@ -80,7 +68,8 @@ class ListContacts extends React.Component {
   };
 
   handleExecute = e => {
-    if (typeof this.props.setData === "function") {
+    const _state = this.props._state || "0";
+    if (typeof this.props.setData === "function" && _state === "0") {
       this.props.setData(e);
     }
     this.handleHide();
@@ -92,7 +81,8 @@ class ListContacts extends React.Component {
   };
 
   handleShow = () => {
-    if (this.props._state === "0") {
+    const _state = this.props._state || "0";
+    if (_state === "0") {
       this.setState({
         data: {
           ...this.state.data,
@@ -129,38 +119,14 @@ class ListContacts extends React.Component {
     if (scroll) {
       const page = this.state.data.page + 1;
       Project.contacts(project_id, state, search, page, rows, this.state.data.list).then(result => {
-        const data = result.data;
         this.setState({
-          data: {
-            ...this.state.data,
-            list: data.list,
-            state: data.state,
-            search: data.search,
-            page: data.page,
-            rows: data.rows,
-            int: data.int,
-            end: data.end,
-            count: data.count,
-            all: data.all
-          }
+          data: result.data
         });
       });
     } else {
       Project.contacts(project_id, state, search, 1, rows, [this.state.select]).then(result => {
-        const data = result.data;
         this.setState({
-          data: {
-            ...this.state.data,
-            list: data.list,
-            state: data.state,
-            search: data.search,
-            page: data.page,
-            rows: data.rows,
-            int: data.int,
-            end: data.end,
-            count: data.count,
-            all: data.all
-          },
+          data: result.data,
           change: false
         });
       });
@@ -202,6 +168,7 @@ class ListContacts extends React.Component {
       this.handleInit();
       showModal(this.state._id);
     } else if (this.state.show && prevState.data.state !== this.state.data.state) {
+      console.log("listContacts - componentDidUpdate");
       this.handleData(false);
     }
   }
