@@ -1,4 +1,4 @@
-import { SET_SLOPE } from "../actionTypes";
+import { SIGNOUT, SET_SLOPE } from "../actionTypes";
 
 const initialState = {
   slope: []
@@ -6,6 +6,9 @@ const initialState = {
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
+    case SIGNOUT: {
+      return initialState;
+    }
     case SET_SLOPE: {
       return {
         ...state,

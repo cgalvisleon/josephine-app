@@ -1,4 +1,4 @@
-import { TALKING } from "../actionTypes";
+import { SIGNOUT, TALKING } from "../actionTypes";
 
 const initialState = {
   show: "-1"
@@ -6,6 +6,9 @@ const initialState = {
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
+    case SIGNOUT: {
+      return initialState;
+    }
     case TALKING: {
       return {
         ...state,

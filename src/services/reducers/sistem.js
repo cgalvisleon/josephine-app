@@ -76,22 +76,7 @@ export default function reducer(state = initialState, action) {
       };
     }
     case SIGNOUT: {
-      return {
-        ...state,
-        signin: false,
-        token: "",
-        profile: {
-          projects: []
-        },
-        project: {
-          _id: "-1",
-          caption: ""
-        },
-        folders: [],
-        folder: {},
-        view: {},
-        indexFolder: 0
-      };
+      return initialState;
     }
     case SET_PROFILE: {
       return {
